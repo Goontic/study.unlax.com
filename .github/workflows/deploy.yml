@@ -71,6 +71,9 @@ jobs:
               ${{ vars.SERVER_PATH }}/backend/prisma \
               ${{ vars.SERVER_PATH }}/frontend/.next/standalone"
 
+      - name: Verify backend build
+        run: test -f backend/dist/main.js || (echo "ERROR: backend/dist/main.js not found" && exit 1)
+
       - name: Transfer backend build
         run: |
           rsync -az --delete \
