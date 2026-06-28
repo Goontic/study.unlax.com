@@ -72,7 +72,11 @@ jobs:
               ${{ vars.SERVER_PATH }}/frontend/.next/standalone"
 
       - name: Verify backend build
-        run: test -f backend/dist/main.js || (echo "ERROR: backend/dist/main.js not found" && exit 1)
+        run: |
+          if [ ! -f backend/dist/main.js ]; then
+            echo "ERROR: backend/dist/main.js not found"
+            exit 1
+          fi
 
       - name: Transfer backend build
         run: |
