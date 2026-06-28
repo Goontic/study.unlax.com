@@ -110,6 +110,6 @@ jobs:
             cd ${{ vars.SERVER_PATH }}/backend
             npm install
             npx prisma migrate deploy
-            pm2 restart study-backend study-frontend
+            pm2 startOrRestart ecosystem.config.js --update-env
             pm2 save
           "
