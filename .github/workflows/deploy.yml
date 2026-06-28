@@ -28,7 +28,9 @@ jobs:
       - name: Generate Prisma client & Build backend
         run: |
           pnpm prisma:generate
-          pnpm build
+          pnpm exec nest build --verbose
+          echo "=== dist/ contents ==="
+          ls -la dist/ || echo "dist/ does not exist"
         working-directory: backend
 
       # --- Frontend ---

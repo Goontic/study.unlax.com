@@ -1,15 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { QuestionOrderItem, QuestionStep } from "@/lib/types";
 
 interface Props {
+  questionId: number;
   body: string;
   orderItems: QuestionOrderItem[];
   steps: QuestionStep[];
+  nextHref: string;
+  isLast: boolean;
 }
 
-export default function Ordering({ body, orderItems, steps }: Props) {
+export default function Ordering({ questionId, body, orderItems, steps, nextHref, isLast }: Props) {
   const shuffled = [...orderItems].sort(() => Math.random() - 0.5);
   const [remaining, setRemaining] = useState<QuestionOrderItem[]>(shuffled);
   const [selected, setSelected] = useState<QuestionOrderItem[]>([]);
@@ -20,6 +24,17 @@ export default function Ordering({ body, orderItems, steps }: Props) {
   const correct =
     submitted &&
     selected.every((item, idx) => item.correctPosition === idx + 1);
+
+  const handleSubmit = () => {
+    if (submitted) return;
+    const isCorrect = selected.every((item, idx) => item.correctPosition === idx + 1);
+    setSubmitted(true);
+    fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, isCorrect }),
+    }).catch(() => {});
+  };
 
   const handleSelect = (item: QuestionOrderItem) => {
     if (submitted) return;
@@ -73,7 +88,7 @@ export default function Ordering({ body, orderItems, steps }: Props) {
 
       {!submitted && done && (
         <button
-          onClick={() => setSubmitted(true)}
+          onClick={handleSubmit}
           className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base active:bg-blue-700 transition-colors min-h-[56px]"
         >
           答え合わせ
@@ -124,6 +139,15 @@ export default function Ordering({ body, orderItems, steps }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {submitted && (
+        <Link
+          href={nextHref}
+          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
+        >
+          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
+        </Link>
       )}
     </div>
   );

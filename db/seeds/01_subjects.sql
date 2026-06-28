@@ -1,4 +1,4 @@
-INSERT INTO subjects (slug, name, icon, display_order) VALUES
+INSERT INTO subjects (slug, name, icon, "displayOrder") VALUES
   ('math',    '数学', '🔢', 1),
   ('english', '英語', '🔤', 2),
   ('japanese','国語', '📖', 3),

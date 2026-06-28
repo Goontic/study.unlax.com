@@ -26,6 +26,15 @@ export class ProgressController {
     return this.progressService.getStats(req.user.id);
   }
 
+  @Get("topic/:subjectSlug/:topicSlug")
+  getTopicProgress(
+    @Req() req: Request & { user: AuthUser },
+    @Param("subjectSlug") subjectSlug: string,
+    @Param("topicSlug") topicSlug: string,
+  ) {
+    return this.progressService.getTopicProgress(req.user.id, subjectSlug, topicSlug);
+  }
+
   @Get(":subjectSlug")
   getBySubject(
     @Req() req: Request & { user: AuthUser },

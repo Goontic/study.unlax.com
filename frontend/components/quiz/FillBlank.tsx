@@ -1,19 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { QuestionBlankAnswer, QuestionStep } from "@/lib/types";
 
 interface Props {
+  questionId: number;
   body: string;
   blankAnswers: QuestionBlankAnswer[];
   steps: QuestionStep[];
+  nextHref: string;
+  isLast: boolean;
 }
 
 function normalize(s: string) {
   return s.trim().replace(/\s+/g, "").toLowerCase();
 }
 
-export default function FillBlank({ body, blankAnswers, steps }: Props) {
+export default function FillBlank({ questionId, body, blankAnswers, steps, nextHref, isLast }: Props) {
   const [inputs, setInputs] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -24,6 +28,17 @@ export default function FillBlank({ body, blankAnswers, steps }: Props) {
     normalize(inputs[ba.blankIndex] ?? "") === normalize(ba.correctAnswer);
 
   const allCorrect = submitted && sorted.every(isCorrect);
+
+  const handleSubmit = () => {
+    if (!allFilled || submitted) return;
+    const correct = sorted.every(isCorrect);
+    setSubmitted(true);
+    fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, isCorrect: correct }),
+    }).catch(() => {});
+  };
 
   const parts = body.split(/(\{\{\d+\}\})/g);
 
@@ -61,7 +76,7 @@ export default function FillBlank({ body, blankAnswers, steps }: Props) {
 
       {!submitted && (
         <button
-          onClick={() => allFilled && setSubmitted(true)}
+          onClick={handleSubmit}
           disabled={!allFilled}
           className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
         >
@@ -106,6 +121,15 @@ export default function FillBlank({ body, blankAnswers, steps }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {submitted && (
+        <Link
+          href={nextHref}
+          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
+        >
+          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
+        </Link>
       )}
     </div>
   );

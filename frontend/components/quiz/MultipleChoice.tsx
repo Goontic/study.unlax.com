@@ -1,18 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { QuestionChoice, QuestionStep } from "@/lib/types";
 
 interface Props {
+  questionId: number;
   body: string;
   choices: QuestionChoice[];
   steps: QuestionStep[];
+  nextHref: string;
+  isLast: boolean;
 }
 
-export default function MultipleChoice({ body, choices, steps }: Props) {
+export default function MultipleChoice({ questionId, body, choices, steps, nextHref, isLast }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
   const answered = selected !== null;
   const correct = answered && choices.find((c) => c.id === selected)?.isCorrect;
+
+  const handleSelect = (choiceId: number, isCorrect: boolean) => {
+    if (answered) return;
+    setSelected(choiceId);
+    fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, isCorrect }),
+    }).catch(() => {});
+  };
 
   return (
     <div className="space-y-6">
@@ -40,7 +54,7 @@ export default function MultipleChoice({ body, choices, steps }: Props) {
               <button
                 key={choice.id}
                 className={style}
-                onClick={() => !answered && setSelected(choice.id)}
+                onClick={() => handleSelect(choice.id, choice.isCorrect)}
                 disabled={answered}
               >
                 {choice.body}
@@ -78,6 +92,15 @@ export default function MultipleChoice({ body, choices, steps }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {answered && (
+        <Link
+          href={nextHref}
+          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
+        >
+          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
+        </Link>
       )}
     </div>
   );

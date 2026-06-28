@@ -44,3 +44,7 @@ Thumbs.db
 
 # Claude Code session data
 .claude/
+
+# Docker local environment files (copy from docker/.env.*.example)
+docker/.env.backend
+docker/.env.frontend

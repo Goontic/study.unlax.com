@@ -1,0 +1,72 @@
+name: study-unlax
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: study_unlax
+      POSTGRES_USER: study_user
+      POSTGRES_PASSWORD: dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U study_user -d study_unlax"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.dev.Dockerfile
+    restart: unless-stopped
+    env_file:
+      - docker/.env.backend
+    environment:
+      # Docker 内部ネットワーク経由で postgres に接続
+      DATABASE_URL: postgresql://study_user:dev_password@postgres:5432/study_unlax
+    ports:
+      - "4001:4001"
+    volumes:
+      # ソースコードのみマウント（node_modules はイメージ内のものを使用）
+      - ./backend/src:/app/backend/src
+      - ./backend/prisma:/app/backend/prisma
+      - ./backend/prisma.config.ts:/app/backend/prisma.config.ts
+      - ./docker/entrypoint.backend.sh:/app/docker/entrypoint.backend.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.dev.Dockerfile
+    restart: unless-stopped
+    env_file:
+      - docker/.env.frontend
+    environment:
+      # Next.js rewrite の転送先（Docker 内部ネットワーク）
+      BACKEND_URL: http://backend:4001
+    ports:
+      - "3000:3000"
+    volumes:
+      # ソースコードのみマウント（node_modules はイメージ内のものを使用）
+      - ./frontend/app:/app/frontend/app
+      - ./frontend/components:/app/frontend/components
+      - ./frontend/lib:/app/frontend/lib
+      - ./frontend/public:/app/frontend/public
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

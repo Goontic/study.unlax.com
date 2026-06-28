@@ -27,4 +27,26 @@ export class ProgressService {
     });
     return answers;
   }
+
+  async getTopicProgress(userId: number, subjectSlug: string, topicSlug: string) {
+    const answers = await this.prisma.userAnswer.findMany({
+      where: {
+        userId,
+        question: { topic: { slug: topicSlug, subject: { slug: subjectSlug } } },
+      },
+      select: { questionId: true, isCorrect: true },
+    });
+
+    const answeredIds = new Set<number>();
+    const correctIds = new Set<number>();
+    for (const a of answers) {
+      answeredIds.add(a.questionId);
+      if (a.isCorrect) correctIds.add(a.questionId);
+    }
+
+    return {
+      answeredIds: [...answeredIds],
+      correctIds: [...correctIds],
+    };
+  }
 }

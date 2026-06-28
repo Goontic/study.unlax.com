@@ -1,22 +1,37 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { QuestionStep } from "@/lib/types";
 
 interface Props {
+  questionId: number;
   body: string;
   correctAnswer: string;
   steps: QuestionStep[];
+  nextHref: string;
+  isLast: boolean;
 }
 
 function normalize(s: string) {
   return s.trim().replace(/\s+/g, "").toLowerCase();
 }
 
-export default function TextInput({ body, correctAnswer, steps }: Props) {
+export default function TextInput({ questionId, body, correctAnswer, steps, nextHref, isLast }: Props) {
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const correct = submitted && normalize(value) === normalize(correctAnswer);
+
+  const handleSubmit = () => {
+    if (!value.trim() || submitted) return;
+    const isCorrect = normalize(value) === normalize(correctAnswer);
+    setSubmitted(true);
+    fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, isCorrect }),
+    }).catch(() => {});
+  };
 
   return (
     <div className="space-y-6">
@@ -37,7 +52,7 @@ export default function TextInput({ body, correctAnswer, steps }: Props) {
 
       {!submitted && (
         <button
-          onClick={() => value.trim() && setSubmitted(true)}
+          onClick={handleSubmit}
           disabled={!value.trim()}
           className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
         >
@@ -77,6 +92,15 @@ export default function TextInput({ body, correctAnswer, steps }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {submitted && (
+        <Link
+          href={nextHref}
+          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
+        >
+          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
+        </Link>
       )}
     </div>
   );

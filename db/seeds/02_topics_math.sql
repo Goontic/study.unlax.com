@@ -1,4 +1,4 @@
-INSERT INTO topics (subject_id, slug, name, grade_level, display_order)
+INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -14,4 +14,4 @@ CROSS JOIN (VALUES
   ('probability',       '確率',              2, 10)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'math'
-ON CONFLICT (subject_id, slug) DO NOTHING;
+ON CONFLICT ("subjectId", slug) DO NOTHING;

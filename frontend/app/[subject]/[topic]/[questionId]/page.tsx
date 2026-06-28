@@ -61,15 +61,25 @@ export default async function QuestionPage({ params }: Props) {
   let subject: Subject;
   let topic: Topic;
 
+  let questions: Question[] = [];
   try {
-    [question, subject, topic] = await Promise.all([
+    [question, subject, topic, questions] = await Promise.all([
       apiFetch<Question>(`/questions/${questionId}`),
       apiFetch<Subject>(`/subjects/${subjectSlug}`),
       apiFetch<Topic>(`/subjects/${subjectSlug}/topics/${topicSlug}`),
+      apiFetch<Question[]>(`/subjects/${subjectSlug}/topics/${topicSlug}/questions`),
     ]);
   } catch {
     notFound();
   }
+
+  const sorted = [...questions].sort((a, b) => a.displayOrder - b.displayOrder);
+  const currentIndex = sorted.findIndex((q) => q.id === question.id);
+  const nextQuestion = sorted[currentIndex + 1] ?? null;
+  const nextHref = nextQuestion
+    ? `/${subjectSlug}/${topicSlug}/${nextQuestion.id}`
+    : `/${subjectSlug}/${topicSlug}`;
+  const isLast = currentIndex === sorted.length - 1;
 
   const jsonLd = buildJsonLd(question, subject, topic);
 
@@ -92,38 +102,61 @@ export default async function QuestionPage({ params }: Props) {
             </Link>{" "}
             ›
           </p>
-          <h1 className="text-base font-bold text-gray-700">問題</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-base font-bold text-gray-700">問題</h1>
+            <span className="text-sm text-gray-400">
+              {currentIndex + 1} / {sorted.length}
+            </span>
+          </div>
+          <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-blue-400 transition-all"
+              style={{ width: `${((currentIndex + 1) / sorted.length) * 100}%` }}
+            />
+          </div>
         </div>
 
         {question.type === "multiple_choice" && (
           <MultipleChoice
+            questionId={question.id}
             body={question.body}
             choices={question.choices ?? []}
             steps={question.steps ?? []}
+            nextHref={nextHref}
+            isLast={isLast}
           />
         )}
 
         {question.type === "text_input" && (
           <TextInput
+            questionId={question.id}
             body={question.body}
             correctAnswer={question.blankAnswers?.[0]?.correctAnswer ?? ""}
             steps={question.steps ?? []}
+            nextHref={nextHref}
+            isLast={isLast}
           />
         )}
 
         {question.type === "fill_blank" && (
           <FillBlank
+            questionId={question.id}
             body={question.body}
             blankAnswers={question.blankAnswers ?? []}
             steps={question.steps ?? []}
+            nextHref={nextHref}
+            isLast={isLast}
           />
         )}
 
         {question.type === "ordering" && (
           <Ordering
+            questionId={question.id}
             body={question.body}
             orderItems={question.orderItems ?? []}
             steps={question.steps ?? []}
+            nextHref={nextHref}
+            isLast={isLast}
           />
         )}
       </div>

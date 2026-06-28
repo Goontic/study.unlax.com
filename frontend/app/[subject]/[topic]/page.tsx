@@ -3,8 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Subject, Topic, Question } from "@/lib/types";
-
-const DIFFICULTY_LABEL = ["", "★☆☆☆☆", "★★☆☆☆", "★★★☆☆", "★★★★☆", "★★★★★"];
+import TopicProgress from "@/components/quiz/TopicProgress";
 
 interface Props {
   params: Promise<{ subject: string; topic: string }>;
@@ -66,25 +65,11 @@ export default async function TopicPage({ params }: Props) {
         <p className="text-gray-500 text-sm mt-1">全{questions.length}問</p>
       </div>
 
-      <ul className="space-y-3">
-        {questions.map((q, idx) => (
-          <li key={q.id}>
-            <Link
-              href={`/${subjectSlug}/${topicSlug}/${q.id}`}
-              className="flex items-center gap-4 rounded-xl bg-white border border-gray-200 px-5 py-4 shadow-sm active:bg-gray-50 transition-colors"
-            >
-              <span className="text-gray-400 font-medium w-8 shrink-0 text-center">
-                {idx + 1}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-gray-800 text-sm leading-snug line-clamp-2">{q.body}</p>
-                <p className="text-yellow-500 text-xs mt-1">{DIFFICULTY_LABEL[q.difficulty]}</p>
-              </div>
-              <span className="text-gray-400 shrink-0">›</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <TopicProgress
+        subjectSlug={subjectSlug}
+        topicSlug={topicSlug}
+        questions={[...questions].sort((a, b) => a.displayOrder - b.displayOrder)}
+      />
     </div>
   );
 }
