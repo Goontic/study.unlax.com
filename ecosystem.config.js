@@ -17,7 +17,7 @@ module.exports = {
       script: "dist/main.js",
       env: {
         NODE_ENV: "production",
-        PORT: 4000,
+        PORT: 4001,
       },
     },
   ],
