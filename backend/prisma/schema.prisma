@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  answers      UserAnswer[]
+  favorites    UserFavorite[]
+
+  @@map("users")
+}
+
+model Subject {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+  name         String
+  icon         String
+  displayOrder Int      @default(0)
+  topics       Topic[]
+
+  @@map("subjects")
+}
+
+model Topic {
+  id           Int        @id @default(autoincrement())
+  subjectId    Int
+  slug         String
+  name         String
+  gradeLevel   Int
+  displayOrder Int        @default(0)
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  questions    Question[]
+
+  @@unique([subjectId, slug])
+  @@map("topics")
+}
+
+enum QuestionType {
+  multiple_choice
+  text_input
+  fill_blank
+  ordering
+}
+
+model Question {
+  id           Int                   @id @default(autoincrement())
+  topicId      Int
+  type         QuestionType
+  body         String
+  difficulty   Int                   @default(3)
+  displayOrder Int                   @default(0)
+  createdAt    DateTime              @default(now())
+  topic        Topic                 @relation(fields: [topicId], references: [id])
+  choices      QuestionChoice[]
+  blankAnswers QuestionBlankAnswer[]
+  orderItems   QuestionOrderItem[]
+  steps        QuestionStep[]
+  answers      UserAnswer[]
+  favorites    UserFavorite[]
+
+  @@map("questions")
+}
+
+model QuestionChoice {
+  id           Int      @id @default(autoincrement())
+  questionId   Int
+  body         String
+  isCorrect    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_choices")
+}
+
+model QuestionBlankAnswer {
+  id            Int      @id @default(autoincrement())
+  questionId    Int
+  blankIndex    Int
+  correctAnswer String
+  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_blank_answers")
+}
+
+model QuestionOrderItem {
+  id              Int      @id @default(autoincrement())
+  questionId      Int
+  body            String
+  correctPosition Int
+  question        Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_order_items")
+}
+
+model QuestionStep {
+  id         Int      @id @default(autoincrement())
+  questionId Int
+  stepNumber Int
+  body       String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_steps")
+}
+
+model UserAnswer {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  questionId Int
+  isCorrect  Boolean
+  answeredAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@map("user_answers")
+}
+
+model UserFavorite {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  questionId Int
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId])
+  @@map("user_favorites")
+}

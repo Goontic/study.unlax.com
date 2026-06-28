@@ -1,0 +1,2 @@
+# Generated Prisma client (output先がnode_modules外の場合のみ必要)
+/generated/

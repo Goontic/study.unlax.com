@@ -1,0 +1,5 @@
+# Next.js auto-generated
+next-env.d.ts
+
+# pnpm workspace (frontend-local config, not part of monorepo root)
+pnpm-lock.yaml
