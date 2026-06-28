@@ -3,11 +3,12 @@ module.exports = {
     {
       name: "study-frontend",
       cwd: "./frontend",
-      script: "node_modules/.bin/next",
-      args: "start",
+      script: "start.sh",
+      interpreter: "bash",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
+        HOSTNAME: "0.0.0.0",
       },
     },
     {
