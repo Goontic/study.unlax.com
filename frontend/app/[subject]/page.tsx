@@ -44,6 +44,15 @@ export default async function SubjectPage({ params }: Props) {
     notFound();
   }
 
+  const sorted = [...topics].sort((a, b) => a.displayOrder - b.displayOrder);
+  const gradeGroups = sorted.reduce<Map<number, Topic[]>>((map, t) => {
+    const list = map.get(t.gradeLevel) ?? [];
+    list.push(t);
+    map.set(t.gradeLevel, list);
+    return map;
+  }, new Map());
+  const grades = [...gradeGroups.keys()].sort((a, b) => a - b);
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       <div className="mb-6">
@@ -53,22 +62,28 @@ export default async function SubjectPage({ params }: Props) {
         <p className="text-gray-500 text-sm mt-1">単元を選んで問題を解こう</p>
       </div>
 
-      <ul className="space-y-3">
-        {topics.map((topic) => (
-          <li key={topic.id}>
-            <Link
-              href={`/${slug}/${topic.slug}`}
-              className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-5 py-4 shadow-sm active:bg-gray-50 transition-colors"
-            >
-              <div>
-                <span className="font-medium text-gray-800">{topic.name}</span>
-                <span className="ml-2 text-xs text-gray-400">{topic.gradeLevel}年生</span>
-              </div>
-              <span className="text-gray-400">›</span>
-            </Link>
-          </li>
+      <div className="space-y-8">
+        {grades.map((grade) => (
+          <section key={grade}>
+            <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-3">
+              中学{grade}年
+            </h2>
+            <ul className="space-y-3">
+              {gradeGroups.get(grade)!.map((topic) => (
+                <li key={topic.id}>
+                  <Link
+                    href={`/${slug}/${topic.slug}`}
+                    className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-5 py-4 shadow-sm active:bg-gray-50 transition-colors"
+                  >
+                    <span className="font-medium text-gray-800">{topic.name}</span>
+                    <span className="text-gray-400">›</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

@@ -17,6 +17,10 @@ export interface Topic {
   displayOrder: number;
 }
 
+export interface SubjectWithTopics extends Subject {
+  topics: Topic[];
+}
+
 export interface QuestionChoice {
   id: number;
   body: string;

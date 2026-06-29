@@ -26,6 +26,19 @@ export class SubjectsService {
     });
   }
 
+  getByGrade(level: number) {
+    return this.prisma.subject.findMany({
+      where: { topics: { some: { gradeLevel: level } } },
+      orderBy: { displayOrder: "asc" },
+      include: {
+        topics: {
+          where: { gradeLevel: level },
+          orderBy: { displayOrder: "asc" },
+        },
+      },
+    });
+  }
+
   getQuestions(subjectSlug: string, topicSlug: string) {
     return this.prisma.question.findMany({
       where: { topic: { slug: topicSlug, subject: { slug: subjectSlug } } },

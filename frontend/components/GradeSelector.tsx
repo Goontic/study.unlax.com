@@ -1,71 +1,54 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import { apiFetch } from "@/lib/api";
+import type { SubjectWithTopics } from "@/lib/types";
 
-const MIDDLE_SUBJECTS = [
-  { slug: "math",     name: "数学", icon: "🔢", color: "bg-blue-50 border-blue-200 text-blue-700" },
-  { slug: "english",  name: "英語", icon: "🔤", color: "bg-green-50 border-green-200 text-green-700" },
-  { slug: "japanese", name: "国語", icon: "📖", color: "bg-red-50 border-red-200 text-red-700" },
-  { slug: "science",  name: "理科", icon: "🔬", color: "bg-purple-50 border-purple-200 text-purple-700" },
-  { slug: "social",   name: "社会", icon: "🌏", color: "bg-yellow-50 border-yellow-200 text-yellow-700" },
+const GRADES = [
+  { level: 1, label: "中学1年", headerColor: "text-blue-700", chipColor: "bg-blue-50 border-blue-200 text-blue-700" },
+  { level: 2, label: "中学2年", headerColor: "text-indigo-700", chipColor: "bg-indigo-50 border-indigo-200 text-indigo-700" },
+  { level: 3, label: "中学3年", headerColor: "text-violet-700", chipColor: "bg-violet-50 border-violet-200 text-violet-700" },
 ];
 
-type Grade = "elementary" | "middle";
-
-export default function GradeSelector() {
-  const [grade, setGrade] = useState<Grade>("middle");
+export default async function GradeSelector() {
+  const gradeData = await Promise.all(
+    GRADES.map(async (g) => {
+      const subjects = await apiFetch<SubjectWithTopics[]>(`/subjects/by-grade/${g.level}`);
+      return { ...g, subjects };
+    }),
+  );
 
   return (
     <>
-      <section className="mb-6">
-        <div className="flex rounded-xl overflow-hidden border-2 border-gray-200">
-          <button
-            onClick={() => setGrade("elementary")}
-            className={`flex-1 py-3 font-bold text-base transition-colors ${
-              grade === "elementary"
-                ? "bg-orange-500 text-white"
-                : "bg-white text-gray-500 active:bg-gray-50"
-            }`}
-          >
-            小学生
-          </button>
-          <button
-            onClick={() => setGrade("middle")}
-            className={`flex-1 py-3 font-bold text-base transition-colors ${
-              grade === "middle"
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-500 active:bg-gray-50"
-            }`}
-          >
-            中学生
-          </button>
-        </div>
-      </section>
+      <div className="space-y-6">
+        {gradeData.map(({ level, label, headerColor, chipColor, subjects }) => (
+          <section key={level}>
+            <Link
+              href={`/grade/${level}`}
+              className={`flex items-center justify-between mb-3 group`}
+            >
+              <h2 className={`text-base font-bold ${headerColor}`}>{label}</h2>
+              <span className="text-gray-300 group-active:text-gray-500 text-sm">すべて見る ›</span>
+            </Link>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+              {subjects.map((subject) => (
+                <Link
+                  key={subject.slug}
+                  href={`/grade/${level}/${subject.slug}`}
+                  className={`flex flex-col items-center justify-center rounded-xl border py-3 px-2 text-center transition-opacity active:opacity-60 ${chipColor}`}
+                >
+                  <span className="text-2xl mb-1">{subject.icon}</span>
+                  <span className="text-xs font-bold leading-tight">{subject.name}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
 
-      <section>
-        <h2 className="text-base font-bold text-gray-700 mb-3">科目を選ぼう</h2>
-        {grade === "middle" ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {MIDDLE_SUBJECTS.map((subject) => (
-              <Link
-                key={subject.slug}
-                href={`/${subject.slug}`}
-                className={`flex flex-col items-center justify-center rounded-xl border-2 p-5 min-h-[96px] font-bold text-lg transition-opacity active:opacity-70 ${subject.color}`}
-              >
-                <span className="text-3xl mb-1">{subject.icon}</span>
-                {subject.name}
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-xl bg-orange-50 border-2 border-orange-200 p-8 text-center">
-            <p className="text-3xl mb-2">🚧</p>
-            <p className="font-bold text-orange-700 mb-1">準備中です</p>
-            <p className="text-orange-600 text-sm">小学生向けコンテンツは近日公開予定です。</p>
-          </div>
-        )}
-      </section>
+      <div className="mt-6 rounded-xl bg-orange-50 border border-orange-200 p-5 text-center">
+        <p className="text-xl mb-1">🚧</p>
+        <p className="font-bold text-orange-700 text-sm mb-0.5">小学生向けコンテンツ</p>
+        <p className="text-orange-600 text-xs">近日公開予定です</p>
+      </div>
     </>
   );
 }
