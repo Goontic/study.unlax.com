@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **study.unlax.com** — 中学生向け高校受験対策サイト（完全無料）  
 スマートフォン・タブレットでの移動中学習を主眼に置いたモバイルファーストのWebアプリ。  
 ユーザーアカウントあり（進捗・お気に入り保存）。問題はSQL/スクリプトで直接DB投入。
+修正後は git commit まで行う。
 
 ## Tech Stack
 
