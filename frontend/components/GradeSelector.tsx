@@ -118,7 +118,7 @@ export default async function GradeSelector() {
               {examPrepSubjects.map((subject) => (
                 <Link
                   key={subject.slug}
-                  href={`/exam-prep/${subject.slug}`}
+                  href={`/${subject.slug}`}
                   className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 bg-red-50 border-red-300 text-red-700 active:bg-red-100"
                 >
                   <span className="text-2xl mb-1">{subject.icon}</span>

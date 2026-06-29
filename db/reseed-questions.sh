@@ -35,7 +35,7 @@ export PGPASSWORD="$DB_PASS"
 PSQL="psql -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME"
 
 # 問題 seed ファイルのみ対象（subjects/topics は除外）
-QUESTION_FILES=$(ls "$SEEDS_DIR"/*.sql | grep -v '01_subjects\|02_topics\|04_topics')
+QUESTION_FILES=$(ls "$SEEDS_DIR"/*.sql | grep -v '_subjects\|_topics')
 
 echo "=== 問題データ全入れ替え開始 ==="
 echo "DB: $DB_HOST:$DB_PORT/$DB_NAME"
