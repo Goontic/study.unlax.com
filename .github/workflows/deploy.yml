@@ -40,11 +40,12 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
 
+      # pnpm モノレポでは standalone/frontend/ に出力される
       - name: Prepare frontend standalone
         run: |
-          cp -r frontend/.next/static frontend/.next/standalone/.next/
-          [ -d frontend/public ] && cp -r frontend/public frontend/.next/standalone/ || true
-          rm -rf frontend/.next/standalone/.next/cache/
+          cp -r frontend/.next/static frontend/.next/standalone/frontend/.next/
+          [ -d frontend/public ] && cp -r frontend/public frontend/.next/standalone/frontend/ || true
+          rm -rf frontend/.next/standalone/frontend/.next/cache/
 
       # --- SSH via Cloudflare Tunnel ---
       - name: Install cloudflared
@@ -71,6 +72,7 @@ jobs:
             "mkdir -p \
               ${{ vars.SERVER_PATH }}/backend/dist \
               ${{ vars.SERVER_PATH }}/backend/prisma \
+              ${{ vars.SERVER_PATH }}/backend/node_modules/.prisma \
               ${{ vars.SERVER_PATH }}/frontend/.next/standalone"
 
       - name: Verify backend build
@@ -93,6 +95,13 @@ jobs:
             backend/prisma/ \
             ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/backend/prisma/
 
+      # driver adapters 使用のため生成物は純粋な JS → GitHub で生成して転送
+      - name: Transfer Prisma generated client
+        run: |
+          rsync -az --delete \
+            backend/node_modules/.prisma/ \
+            ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/backend/node_modules/.prisma/
+
       - name: Transfer frontend standalone
         run: |
           rsync -az --delete \
@@ -112,12 +121,14 @@ jobs:
             ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/
 
       # --- Reload ---
+      # PRISMA_SKIP_POSTINSTALL_GENERATE=1 で @prisma/client の postinstall generate をスキップ
+      # prisma generate は GitHub で実行済みのため本番では不要
       - name: Install prod deps, migrate DB, reload PM2
         run: |
           ssh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "
             set -e
             cd ${{ vars.SERVER_PATH }}/backend
-            npm install
+            PRISMA_SKIP_POSTINSTALL_GENERATE=1 npm install
             npx prisma migrate deploy
             cd ${{ vars.SERVER_PATH }}
             pm2 startOrRestart ecosystem.config.js --update-env
