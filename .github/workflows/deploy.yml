@@ -112,6 +112,12 @@ jobs:
             ecosystem.config.js \
             ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/
 
+      - name: Transfer DB scripts
+        run: |
+          rsync -az \
+            db/ \
+            ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/db/
+
       # --- Reload ---
       # npm install で @prisma/client の postinstall が prisma generate を自動実行する
       # pnpm の仮想ストアと異なり npm は node_modules/.prisma/client/ に確実に生成される
