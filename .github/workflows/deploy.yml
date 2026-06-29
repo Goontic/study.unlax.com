@@ -126,7 +126,8 @@ jobs:
           ssh ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }} "
             set -e
             cd ${{ vars.SERVER_PATH }}/backend
-            npm install
+            npm install --include=dev
+            npx prisma generate
             npx prisma migrate deploy
             cd ${{ vars.SERVER_PATH }}
             pm2 startOrRestart ecosystem.config.js --update-env
