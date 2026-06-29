@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import GradeSelector from "@/components/GradeSelector";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "受験スタディ | 小学生・中学生の受験対策",
   description:
