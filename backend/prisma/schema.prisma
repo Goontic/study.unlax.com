@@ -131,7 +131,7 @@ model UserAnswer {
   isCorrect  Boolean
   answeredAt DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
-  question   Question @relation(fields: [questionId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@map("user_answers")
 }
@@ -142,7 +142,7 @@ model UserFavorite {
   questionId Int
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
-  question   Question @relation(fields: [questionId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
   @@map("user_favorites")

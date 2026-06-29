@@ -1,12 +1,13 @@
 #!/bin/bash
-# 全シードデータを順番に投入する（初回セットアップ用）
+# 初回セットアップ用: subjects → topics → questions を全投入する
+#
+# 2回目以降の問題更新は reseed-questions.sh を使うこと。
+# subjects/topics は ON CONFLICT DO NOTHING なので重複しない。
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SEEDS_DIR="$SCRIPT_DIR/seeds"
 
-# DATABASE_URL から psql 接続パラメータを読み取る
-# 例: postgresql://study_user:password@localhost:5432/study_unlax
 if [ -z "${DATABASE_URL:-}" ]; then
   ENV_FILE="$SCRIPT_DIR/../backend/.env"
   if [ -f "$ENV_FILE" ]; then
@@ -19,18 +20,16 @@ if [ -z "${DATABASE_URL:-}" ]; then
   exit 1
 fi
 
-# DATABASE_URL をパース
-DB_URL="${DATABASE_URL}"
-DB_USER=$(echo "$DB_URL" | sed -E 's|postgresql://([^:]+):.*|\1|')
-DB_PASS=$(echo "$DB_URL" | sed -E 's|postgresql://[^:]+:([^@]+)@.*|\1|')
-DB_HOST=$(echo "$DB_URL" | sed -E 's|postgresql://[^@]+@([^:/]+).*|\1|')
-DB_PORT=$(echo "$DB_URL" | sed -E 's|postgresql://[^@]+@[^:]+:([^/]+)/.*|\1|')
-DB_NAME=$(echo "$DB_URL" | sed -E 's|postgresql://[^/]+/([^?]+).*|\1|')
+DB_USER=$(echo "$DATABASE_URL" | sed -E 's|postgresql://([^:]+):.*|\1|')
+DB_PASS=$(echo "$DATABASE_URL" | sed -E 's|postgresql://[^:]+:([^@]+)@.*|\1|')
+DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|postgresql://[^@]+@([^:/]+).*|\1|')
+DB_PORT=$(echo "$DATABASE_URL" | sed -E 's|postgresql://[^@]+@[^:]+:([^/]+)/.*|\1|')
+DB_NAME=$(echo "$DATABASE_URL" | sed -E 's|postgresql://[^/]+/([^?]+).*|\1|')
 
 export PGPASSWORD="$DB_PASS"
 PSQL="psql -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_NAME"
 
-echo "=== シードデータ投入開始 ==="
+echo "=== 初回シードデータ投入開始 ==="
 echo "DB: $DB_HOST:$DB_PORT/$DB_NAME"
 
 for sql_file in "$SEEDS_DIR"/*.sql; do
@@ -43,3 +42,5 @@ done
 
 echo ""
 echo "=== 全シード完了 ==="
+echo ""
+echo "次回以降の問題更新は db/reseed-questions.sh を使ってください。"
