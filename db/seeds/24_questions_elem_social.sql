@@ -14,7 +14,7 @@ c1  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrde
 c2  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrder") SELECT id,'〒',true,1 FROM q2 UNION ALL SELECT id,'十',false,2 FROM q2 UNION ALL SELECT id,'⊠',false,3 FROM q2 UNION ALL SELECT id,'✕',false,4 FROM q2),
 c3  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrder") SELECT id,'250m',true,1 FROM q3 UNION ALL SELECT id,'25m',false,2 FROM q3 UNION ALL SELECT id,'2500m',false,3 FROM q3 UNION ALL SELECT id,'2.5m',false,4 FROM q3),
 c4  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrder") SELECT id,'辞書',false,1 FROM q4 UNION ALL SELECT id,'地図や見学',true,2 FROM q4 UNION ALL SELECT id,'算数のノート',false,3 FROM q4 UNION ALL SELECT id,'理科の本',false,4 FROM q4),
-c5  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrder") SELECT id,'波線',false,1 FROM q5 UNION ALL SELECT id,'格子状の模様（水田記号）',true,2 FROM q5 UNION ALL SELECT id,'三角',false,3 FROM q5 UNION ALL SELECT id'丸',false,4 FROM q5),
+c5  AS (INSERT INTO question_choices ("questionId",body,"isCorrect","displayOrder") SELECT id,'波線',false,1 FROM q5 UNION ALL SELECT id,'格子状の模様（水田記号）',true,2 FROM q5 UNION ALL SELECT id,'三角',false,3 FROM q5 UNION ALL SELECT id,'丸',false,4 FROM q5),
 s3  AS (INSERT INTO question_steps ("questionId","stepNumber",body) SELECT id,1,'縮尺1:25000なら、地図の1cm＝実際の25000cm＝250mです。' FROM q3)
 SELECT 'local-community done';
 

@@ -78,7 +78,7 @@ WITH topic AS (
 q1  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「I like cats.」はどんな意味ですか？',2,1 FROM topic RETURNING id),
 q2  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「Do you like soccer?」への「はい」の返答はどれですか？',2,2 FROM topic RETURNING id),
 q3  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「She plays the piano.」はどんな意味ですか？',2,3 FROM topic RETURNING id),
-q4  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「I don't like natto.」はどんな意味ですか？',2,4 FROM topic RETURNING id),
+q4  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「I don''t like natto.」はどんな意味ですか？',2,4 FROM topic RETURNING id),
 q5  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「He is a teacher.」はどんな意味ですか？',2,5 FROM topic RETURNING id),
 q6  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「What do you want?」はどんな意味ですか？',3,6 FROM topic RETURNING id),
 q7  AS (INSERT INTO questions ("topicId",type,body,difficulty,"displayOrder") SELECT tid,'multiple_choice','「Where is the library?」はどんな意味ですか？',3,7 FROM topic RETURNING id),
