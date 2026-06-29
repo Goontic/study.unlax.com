@@ -15,6 +15,16 @@ export class SubjectsController {
     return this.subjectsService.getByGrade(Number(level));
   }
 
+  @Get("elementary/by-grade/:level")
+  getByGradeElementary(@Param("level") level: string) {
+    return this.subjectsService.getByGradeElementary(Number(level));
+  }
+
+  @Get("exam-prep")
+  getExamPrepSubjects() {
+    return this.subjectsService.getExamPrepSubjects();
+  }
+
   @Get(":slug")
   async findOne(@Param("slug") slug: string) {
     const subject = await this.subjectsService.findOne(slug);

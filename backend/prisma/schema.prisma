@@ -32,12 +32,19 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
+enum SchoolLevel {
+  elementary
+  middle
+  exam_prep
+}
+
 model Subject {
-  id           Int      @id @default(autoincrement())
-  slug         String   @unique
+  id           Int         @id @default(autoincrement())
+  slug         String      @unique
   name         String
   icon         String
-  displayOrder Int      @default(0)
+  displayOrder Int         @default(0)
+  schoolLevel  SchoolLevel @default(middle)
   topics       Topic[]
 
   @@map("subjects")

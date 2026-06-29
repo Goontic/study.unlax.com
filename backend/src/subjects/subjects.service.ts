@@ -28,13 +28,39 @@ export class SubjectsService {
 
   getByGrade(level: number) {
     return this.prisma.subject.findMany({
-      where: { topics: { some: { gradeLevel: level } } },
+      where: { topics: { some: { gradeLevel: level } }, schoolLevel: "middle" },
       orderBy: { displayOrder: "asc" },
       include: {
         topics: {
           where: { gradeLevel: level },
           orderBy: { displayOrder: "asc" },
         },
+      },
+    });
+  }
+
+  getByGradeElementary(level: number) {
+    return this.prisma.subject.findMany({
+      where: {
+        topics: { some: { gradeLevel: level } },
+        schoolLevel: "elementary",
+      },
+      orderBy: { displayOrder: "asc" },
+      include: {
+        topics: {
+          where: { gradeLevel: level },
+          orderBy: { displayOrder: "asc" },
+        },
+      },
+    });
+  }
+
+  getExamPrepSubjects() {
+    return this.prisma.subject.findMany({
+      where: { schoolLevel: "exam_prep" },
+      orderBy: { displayOrder: "asc" },
+      include: {
+        topics: { orderBy: { displayOrder: "asc" } },
       },
     });
   }
