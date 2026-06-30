@@ -25,7 +25,7 @@ export default function HomePage() {
         {/* 無料バッジ */}
         <div className="inline-flex items-center gap-2 bg-white rounded-full px-5 py-2.5 mb-5 shadow-lg">
           <span className="text-2xl" aria-hidden>🎉</span>
-          <span className="font-black text-xl text-orange-500 tracking-wide">ぜんぶ むりょう！</span>
+          <span className="font-black text-xl text-orange-500 tracking-wide">全部 無料！</span>
           <span className="text-2xl" aria-hidden>🎉</span>
         </div>
 
