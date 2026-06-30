@@ -3,13 +3,13 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+      <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         {/* ロゴ */}
-        <Link href="/" className="flex items-center gap-1.5 flex-shrink-0">
-          <span className="text-xl" aria-hidden>🚀</span>
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <span className="text-3xl" aria-hidden>🚀</span>
           <div className="flex flex-col leading-tight">
-            <span className="text-base font-black text-emerald-600">ポケスタ</span>
-            <span className="text-[10px] text-gray-400 font-normal -mt-0.5 hidden sm:block">
+            <span className="text-2xl font-black text-teal-500 tracking-wide">ポケスタ</span>
+            <span className="text-[11px] text-gray-400 font-normal -mt-0.5">
               スキマ時間で合格を掴む無料ドリル
             </span>
           </div>
