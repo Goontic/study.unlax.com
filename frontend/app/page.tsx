@@ -69,41 +69,31 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* ヒーローセクション */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400">
-        {/* 装飾スター */}
-        <span className="pointer-events-none absolute top-4 right-4 text-4xl text-white/30 select-none" aria-hidden>✦</span>
-        <span className="pointer-events-none absolute bottom-8 left-4 text-3xl text-white/20 select-none" aria-hidden>✦</span>
-        <span className="pointer-events-none absolute top-20 left-12 text-2xl text-white/15 select-none" aria-hidden>✦</span>
-
-        <div className="max-w-2xl mx-auto px-5 pt-8 pb-10 flex flex-col sm:flex-row items-center gap-6">
-          {/* テキスト */}
-          <div className="flex-1">
-            <h1 className="text-3xl font-black text-white leading-snug mb-3 drop-shadow-sm">
-              スキマ時間で<br />合格へ！<br />
-              <span className="text-2xl font-extrabold">完全無料の学習ドリル</span>
-            </h1>
-            <p className="text-white/90 text-sm font-medium mb-6 leading-relaxed">
-              電車の中、待ち時間、寝る前、<br />どこでも効率よく学べる。
-            </p>
-            <Link
-              href="#start"
-              className="inline-block bg-white text-emerald-600 font-black text-sm px-7 py-3 rounded-full shadow-lg hover:shadow-xl active:scale-95 transition-all"
-            >
-              今すぐ無料で始める →
-            </Link>
-          </div>
-
-          {/* ヒーロー画像（/public/images/hero.png を配置してください） */}
-          <div className="relative w-44 h-44 sm:w-52 sm:h-52 flex-shrink-0">
-            <Image
-              src="/images/hero.png"
-              alt="スマホで勉強する小中学生"
-              fill
-              className="object-contain drop-shadow-xl"
-              priority
-              unoptimized
-            />
-          </div>
+      <section className="relative overflow-hidden min-h-[200px] sm:min-h-[300px]">
+        {/* 背景画像 */}
+        <Image
+          src="/images/hero-bg.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          priority
+          unoptimized
+        />
+        {/* テキストオーバーレイ（中央） */}
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-[200px] sm:min-h-[300px] px-4 py-10 text-center">
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-800 leading-snug mb-3">
+            スキマ時間で合格へ！<br />
+            <span className="text-emerald-600">完全無料の学習ドリル</span>
+          </h1>
+          <p className="text-gray-600 text-sm font-medium mb-6 leading-relaxed">
+            電車の中、待ち時間、寝る前、<br />どこでも効率よく学べる。
+          </p>
+          <Link
+            href="#start"
+            className="inline-block bg-emerald-500 text-white font-black text-sm px-8 py-3 rounded-full shadow-lg hover:bg-emerald-600 active:scale-95 transition-all"
+          >
+            今すぐ無料で始める →
+          </Link>
         </div>
       </section>
 
