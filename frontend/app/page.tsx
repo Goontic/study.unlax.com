@@ -69,7 +69,7 @@ export default function HomePage() {
   return (
     <div className="bg-white">
       {/* ヒーローセクション */}
-      <section className="relative overflow-hidden min-h-[200px] sm:min-h-[300px]">
+      <section className="relative overflow-hidden min-h-[400px]">
         {/* 背景画像 */}
         <Image
           src="/images/hero-bg.png"
@@ -80,7 +80,7 @@ export default function HomePage() {
           unoptimized
         />
         {/* テキストオーバーレイ（中央） */}
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-[200px] sm:min-h-[300px] px-4 py-10 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-[400px] px-4 py-10 text-center">
           <h1 className="text-2xl sm:text-3xl font-black text-gray-800 leading-snug mb-3">
             スキマ時間で合格へ！<br />
             <span className="text-emerald-600">完全無料の学習ドリル</span>
