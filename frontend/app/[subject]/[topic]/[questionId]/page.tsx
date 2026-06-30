@@ -90,7 +90,7 @@ export default async function QuestionPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
         <div>
           <p className="text-sm text-gray-400 mb-1">
             <Link href={`/${subjectSlug}`} className="hover:underline">

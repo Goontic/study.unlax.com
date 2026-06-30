@@ -98,7 +98,7 @@ export default function HomePage() {
       </section>
 
       {/* 特徴セクション */}
-      <section className="max-w-2xl mx-auto px-4 pt-10 pb-8">
+      <section className="max-w-3xl mx-auto px-4 pt-10 pb-8">
         <h2 className="text-xl font-black text-gray-800 text-center mb-6">
           ポケスタの特徴
         </h2>
@@ -122,7 +122,7 @@ export default function HomePage() {
       </section>
 
       {/* 学習カテゴリーセクション */}
-      <section className="max-w-2xl mx-auto px-4 pb-8">
+      <section className="max-w-3xl mx-auto px-4 pb-8">
         <h2 className="text-xl font-black text-gray-800 text-center mb-5">
           主な学習カテゴリー
         </h2>
@@ -156,7 +156,7 @@ export default function HomePage() {
       </section>
 
       {/* 学年・科目セレクター */}
-      <section id="start" className="max-w-2xl mx-auto px-4 pb-10">
+      <section id="start" className="max-w-3xl mx-auto px-4 pb-10">
         <div className="flex items-center gap-2 mb-4">
           <span className="text-2xl" aria-hidden>📚</span>
           <h2 className="text-lg font-black text-gray-800">学年を選んでね！</h2>

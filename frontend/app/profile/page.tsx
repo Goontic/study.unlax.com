@@ -36,7 +36,7 @@ export default async function ProfilePage() {
   const stats = accessToken ? await fetchStats(accessToken) : null;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className="max-w-3xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">マイページ</h1>
 
       <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mb-6">
