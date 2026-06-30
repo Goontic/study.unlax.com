@@ -1,18 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-2xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-        {/* ロゴ */}
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-3xl" aria-hidden>🚀</span>
-          <div className="flex flex-col leading-tight">
-            <span className="text-2xl font-black text-teal-500 tracking-wide">ポケスタ</span>
-            <span className="text-[11px] text-gray-400 font-normal -mt-0.5">
-              スキマ時間で合格を掴む無料ドリル
-            </span>
-          </div>
+        {/* ロゴ画像 */}
+        <Link href="/" className="flex-shrink-0">
+          <Image
+            src="/images/logo.png"
+            alt="ポケスタ - スキマ時間で合格を掴む無料ドリル"
+            width={160}
+            height={46}
+            priority
+            unoptimized
+          />
         </Link>
 
         {/* ナビボタン */}
