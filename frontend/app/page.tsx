@@ -81,7 +81,7 @@ export default function HomePage() {
         />
         {/* テキストオーバーレイ（中央） */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-[400px] px-4 py-10 text-center">
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-800 leading-snug mb-3">
+          <h1 className="text-4xl sm:text-5xl font-black text-gray-800 leading-snug mb-3">
             スキマ時間で合格へ！<br />
             <span className="text-emerald-600">完全無料の学習ドリル</span>
           </h1>
