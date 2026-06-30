@@ -102,20 +102,20 @@ export default function HomePage() {
         <h2 className="text-xl font-black text-gray-800 text-center mb-6">
           ポケスタの特徴
         </h2>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {FEATURES.map((f) => (
             <div
               key={f.num}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4"
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex flex-col items-center text-center"
             >
-              <div className="flex items-center gap-2 mb-2">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-black flex items-center justify-center">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500 text-white text-[10px] font-black flex items-center justify-center">
                   {f.num}
                 </span>
-                <span className="text-xl" aria-hidden>{f.icon}</span>
+                <span className="text-lg" aria-hidden>{f.icon}</span>
               </div>
-              <p className="font-black text-sm text-gray-800 mb-1 leading-snug">{f.title}</p>
-              <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+              <p className="font-black text-xs text-gray-800 mb-1 leading-snug">{f.title}</p>
+              <p className="text-[10px] text-gray-500 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
