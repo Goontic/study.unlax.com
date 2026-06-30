@@ -4,9 +4,9 @@ import GradeSelector from "@/components/GradeSelector";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "受験スタディ | 完全無料！中学生の高校受験対策",
+  title: "ポケスタ | スキマ時間で合格を掴む！小中学生の無料受験対策ドリル",
   description:
-    "完全無料で使える中学生向け高校受験対策サイト。数学・英語・国語・理科・社会の問題と解説がスマホで手軽に。登録なしでもすぐ始められます！",
+    "ポケスタは小学生・中学生向けの完全無料受験対策ドリル。5科目（数学・英語・国語・理科・社会）をスキマ時間にスマホで学習。登録なしでいますぐ始められます！",
 };
 
 export default function HomePage() {

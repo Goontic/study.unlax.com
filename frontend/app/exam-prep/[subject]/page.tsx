@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const data = await apiFetch<Subject>(`/subjects/${slug}`);
     return {
-      title: `高校入試対策 ${data.name} | 受験スタディ`,
+      title: `高校入試対策 ${data.name} | ポケスタ`,
       description: `高校入試の${data.name}対策。入試頻出の単元を効率よく学習できます。`,
     };
   } catch {

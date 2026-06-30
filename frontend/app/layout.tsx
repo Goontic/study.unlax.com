@@ -12,13 +12,13 @@ const notoSansJP = Noto_Sans_JP({
 
 export const metadata: Metadata = {
   title: {
-    default: "受験スタディ | 中学生の高校受験対策",
-    template: "%s | 受験スタディ",
+    default: "ポケスタ | 小中学生の受験対策・無料ドリル5科目",
+    template: "%s | ポケスタ",
   },
   description:
-    "中学生向けの高校受験対策サイト。数学・英語・国語・理科・社会の問題を無料で解いて、スマホやタブレットで移動中も勉強できます。",
+    "ポケスタ（ポケット受験スタディ）は小学生・中学生向けの無料受験対策ドリル。数学・英語・国語・理科・社会の5科目をスキマ時間にスマホで学習できます。",
   openGraph: {
-    siteName: "受験スタディ",
+    siteName: "ポケスタ",
     locale: "ja_JP",
     type: "website",
   },

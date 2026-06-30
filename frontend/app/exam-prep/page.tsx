@@ -6,9 +6,9 @@ import type { SubjectWithTopics } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "高校入試対策 | 受験スタディ",
+  title: "高校入試対策 | ポケスタ",
   description:
-    "高校入試の傾向に合わせたオリジナル問題で入試対策。数学・英語・国語・理科・社会の5科目を効率よく学習できます。",
+    "高校入試の傾向に合わせたオリジナル問題で無料受験対策。数学・英語・国語・理科・社会の5科目を中学生がスキマ時間に効率よく学習できます。",
 };
 
 const SUBJECT_COLORS: Record<string, string> = {
