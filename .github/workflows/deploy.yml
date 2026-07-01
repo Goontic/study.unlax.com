@@ -89,10 +89,15 @@ jobs:
           rsync -az \
             backend/package.json \
             backend/prisma.config.ts \
+            backend/tsconfig.json \
             ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/backend/
           rsync -az --delete \
             backend/prisma/ \
             ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/backend/prisma/
+          # admin:create などの運用スクリプト(ts-nodeで直接実行するため.tsのまま転送)
+          rsync -az --delete \
+            backend/scripts/ \
+            ${{ vars.SERVER_USER }}@${{ vars.SERVER_HOST }}:${{ vars.SERVER_PATH }}/backend/scripts/
 
       - name: Transfer frontend standalone
         run: |
