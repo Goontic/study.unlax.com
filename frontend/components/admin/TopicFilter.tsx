@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import type { Subject } from "@/lib/types";
+import type { Topic } from "@/lib/types";
 
-export default function SubjectFilter({
-  subjects,
+export default function TopicFilter({
+  topics,
   basePath,
   value,
 }: {
-  subjects: Subject[];
+  topics: Topic[];
   basePath: string;
   value?: string;
 }) {
@@ -22,20 +22,19 @@ export default function SubjectFilter({
         const params = new URLSearchParams(searchParams.toString());
         const v = e.target.value;
         if (v) {
-          params.set("subjectId", v);
+          params.set("topicId", v);
         } else {
-          params.delete("subjectId");
+          params.delete("topicId");
         }
-        params.delete("topicId");
         params.delete("page");
         router.push(`${basePath}?${params.toString()}`);
       }}
       className="rounded-xl border-2 border-gray-200 px-4 py-2 text-sm"
     >
-      <option value="">すべての科目</option>
-      {subjects.map((s) => (
-        <option key={s.id} value={s.id}>
-          {s.name}
+      <option value="">すべての単元</option>
+      {topics.map((t) => (
+        <option key={t.id} value={t.id}>
+          {t.name}
         </option>
       ))}
     </select>

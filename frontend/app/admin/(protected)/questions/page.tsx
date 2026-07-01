@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
 import SubjectFilter from "@/components/admin/SubjectFilter";
+import TopicFilter from "@/components/admin/TopicFilter";
 import KeywordSearch from "@/components/admin/KeywordSearch";
 import Pagination from "@/components/admin/Pagination";
 import type { Question, QuestionType, Subject, Topic } from "@/lib/types";
@@ -66,6 +67,9 @@ export default async function AdminQuestionsPage({ searchParams }: Props) {
   const { items: questions, total, page: currentPage, pageSize } = await fetchQuestions(qs, token);
 
   const topicName = (id: number) => topics.find((t) => t.id === id)?.name ?? "";
+  const topicsForSubject = subjectId
+    ? topics.filter((t) => t.subjectId === Number(subjectId))
+    : topics;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
@@ -82,6 +86,9 @@ export default async function AdminQuestionsPage({ searchParams }: Props) {
 
       <div className="mb-4 flex flex-wrap gap-3 items-center">
         <SubjectFilter subjects={subjects} basePath="/admin/questions" value={subjectId} />
+        {subjectId && (
+          <TopicFilter topics={topicsForSubject} basePath="/admin/questions" value={topicId} />
+        )}
         <KeywordSearch basePath="/admin/questions" value={keyword} />
       </div>
 
