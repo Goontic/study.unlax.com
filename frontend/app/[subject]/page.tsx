@@ -12,9 +12,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { subject: slug } = await params;
   try {
     const data = await apiFetch<Subject>(`/subjects/${slug}`);
+    const description =
+      data.genre === "certification"
+        ? `${data.name}の検定対策問題を単元別に学習できます。`
+        : `高校受験対策の${data.name}問題を単元別に学習できます。`;
     return {
       title: `${data.name}の問題一覧`,
-      description: `高校受験対策の${data.name}問題を単元別に学習できます。`,
+      description,
     };
   } catch {
     return { title: "科目" };
@@ -46,8 +50,9 @@ export default async function SubjectPage({ params }: Props) {
 
   const sorted = [...topics].sort((a, b) => a.displayOrder - b.displayOrder);
 
-  const isExamPrep = subjectData.schoolLevel === "exam_prep";
-  const isElementary = subjectData.schoolLevel === "elementary";
+  const isCertification = subjectData.genre === "certification";
+  const isExamPrep = !isCertification && subjectData.schoolLevel === "exam_prep";
+  const isElementary = !isCertification && subjectData.schoolLevel === "elementary";
 
   const gradeGroups = sorted.reduce<Map<number, Topic[]>>((map, t) => {
     const list = map.get(t.gradeLevel) ?? [];
@@ -59,18 +64,26 @@ export default async function SubjectPage({ params }: Props) {
 
   const gradeLabel = (g: number) => {
     if (isExamPrep) return "入試対策";
+    if (isCertification) return `${g}級`;
     if (isElementary) return `小学${g}年`;
     return `中学${g}年`;
   };
 
-  const backHref = isExamPrep ? "/exam-prep" : "/";
+  const backHref = isExamPrep ? "/exam-prep" : isCertification ? "/certification" : "/";
+  const breadcrumbLabel = isExamPrep
+    ? "高校入試対策"
+    : isCertification
+      ? "検定"
+      : isElementary
+        ? "小学校"
+        : "トップ";
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
         <p className="text-sm text-gray-400 mb-1">
           <Link href={backHref} className="hover:underline">
-            {isExamPrep ? "高校入試対策" : isElementary ? "小学校" : "トップ"}
+            {breadcrumbLabel}
           </Link>
           {" ›"}
         </p>

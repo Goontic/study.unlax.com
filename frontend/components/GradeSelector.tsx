@@ -36,7 +36,7 @@ const ELEMENTARY_GRADES = [
 ];
 
 export default async function GradeSelector() {
-  const [middleData, elementaryData, examPrepSubjects] = await Promise.all([
+  const [middleData, elementaryData, examPrepSubjects, certificationSubjects] = await Promise.all([
     Promise.all(
       MIDDLE_GRADES.map(async (g) => {
         const subjects = await apiFetch<SubjectWithTopics[]>(`/subjects/by-grade/${g.level}`);
@@ -54,12 +54,19 @@ export default async function GradeSelector() {
       }),
     ),
     apiFetch<SubjectWithTopics[]>("/subjects/exam-prep").catch(() => [] as SubjectWithTopics[]),
+    apiFetch<SubjectWithTopics[]>("/subjects/certification").catch(() => [] as SubjectWithTopics[]),
   ]);
 
   const elementaryWithContent = elementaryData.filter((g) => g.subjects.length > 0);
 
   return (
     <>
+      {/* 学校教育ジャンル */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-xl" aria-hidden>🎓</span>
+        <h2 className="text-lg font-black text-gray-800">学校教育</h2>
+      </div>
+
       {/* 中学校セクション */}
       <div className="mb-3">
         <div className="flex items-center gap-2 mb-3">
@@ -173,6 +180,44 @@ export default async function GradeSelector() {
           </div>
         )}
       </div>
+
+      {/* 検定ジャンル */}
+      <div className="flex items-center gap-2 mb-4 mt-10">
+        <span className="text-xl" aria-hidden>📖</span>
+        <h2 className="text-lg font-black text-gray-800">検定</h2>
+      </div>
+      {certificationSubjects.length > 0 ? (
+        <section className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">
+          <Link
+            href="/certification"
+            className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-500 to-blue-600 group"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-2xl" aria-hidden>📖</span>
+              <h3 className="text-base font-black text-white">検定対策</h3>
+            </div>
+            <span className="text-white/80 text-sm font-bold group-active:text-white">すべて見る ›</span>
+          </Link>
+          <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-5">
+            {certificationSubjects.map((subject) => (
+              <Link
+                key={subject.slug}
+                href={`/${subject.slug}`}
+                className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 bg-indigo-50 border-indigo-300 text-indigo-700 active:bg-indigo-100"
+              >
+                <span className="text-2xl mb-1">{subject.icon}</span>
+                <span className="text-xs font-bold leading-tight">{subject.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <div className="rounded-3xl bg-gradient-to-br from-indigo-50 to-blue-100 border-2 border-indigo-200 p-5 text-center">
+          <p className="text-3xl mb-2" aria-hidden>🚧</p>
+          <p className="font-black text-indigo-700 text-sm mb-1">検定コンテンツ</p>
+          <p className="text-indigo-500 text-xs font-bold">まもなく公開！お楽しみに ✨</p>
+        </div>
+      )}
     </>
   );
 }

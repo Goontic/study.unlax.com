@@ -40,7 +40,8 @@ export default async function AdminSubjectsPage() {
                 {s.icon} {s.name}
               </p>
               <p className="text-xs text-gray-500">
-                {s.slug} / {s.schoolLevel} / 表示順 {s.displayOrder}
+                {s.genre === "certification" ? "検定" : s.schoolLevel} / {s.slug} / 表示順{" "}
+                {s.displayOrder}
               </p>
             </div>
             <div className="flex gap-3 items-center">

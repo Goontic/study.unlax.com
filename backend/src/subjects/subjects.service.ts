@@ -28,7 +28,11 @@ export class SubjectsService {
 
   getByGrade(level: number) {
     return this.prisma.subject.findMany({
-      where: { topics: { some: { gradeLevel: level } }, schoolLevel: "middle" },
+      where: {
+        topics: { some: { gradeLevel: level } },
+        genre: "school_education",
+        schoolLevel: "middle",
+      },
       orderBy: { displayOrder: "asc" },
       include: {
         topics: {
@@ -43,6 +47,7 @@ export class SubjectsService {
     return this.prisma.subject.findMany({
       where: {
         topics: { some: { gradeLevel: level } },
+        genre: "school_education",
         schoolLevel: "elementary",
       },
       orderBy: { displayOrder: "asc" },
@@ -57,7 +62,17 @@ export class SubjectsService {
 
   getExamPrepSubjects() {
     return this.prisma.subject.findMany({
-      where: { schoolLevel: "exam_prep" },
+      where: { genre: "school_education", schoolLevel: "exam_prep" },
+      orderBy: { displayOrder: "asc" },
+      include: {
+        topics: { orderBy: { displayOrder: "asc" } },
+      },
+    });
+  }
+
+  getCertificationSubjects() {
+    return this.prisma.subject.findMany({
+      where: { genre: "certification" },
       orderBy: { displayOrder: "asc" },
       include: {
         topics: { orderBy: { displayOrder: "asc" } },

@@ -1,5 +1,6 @@
 export type QuestionType = "multiple_choice" | "text_input" | "fill_blank" | "ordering";
 export type SchoolLevel = "elementary" | "middle" | "exam_prep";
+export type Genre = "school_education" | "certification";
 
 export interface Subject {
   id: number;
@@ -7,6 +8,7 @@ export interface Subject {
   name: string;
   icon: string;
   displayOrder: number;
+  genre: Genre;
   schoolLevel: SchoolLevel;
 }
 

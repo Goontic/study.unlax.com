@@ -49,12 +49,21 @@ enum SchoolLevel {
   exam_prep
 }
 
+// school_education: 学校の教科書に沿った学習（小学校・中学校・高校入試対策）
+// certification: 英検・漢検・数検など学校教育とは別軸の検定試験
+enum Genre {
+  school_education
+  certification
+}
+
 model Subject {
   id           Int         @id @default(autoincrement())
   slug         String      @unique
   name         String
   icon         String
   displayOrder Int         @default(0)
+  genre        Genre       @default(school_education)
+  // genre = school_education の場合にのみ意味を持つ（小学生/中学生/高校入試対策の区分）
   schoolLevel  SchoolLevel @default(middle)
   topics       Topic[]
 
@@ -66,6 +75,7 @@ model Topic {
   subjectId    Int
   slug         String
   name         String
+  // 学校教育科目では学年(1〜6等)、検定科目では級を表す汎用フィールド
   gradeLevel   Int
   displayOrder Int        @default(0)
   subject      Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)

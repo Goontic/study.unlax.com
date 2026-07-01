@@ -25,6 +25,11 @@ export class SubjectsController {
     return this.subjectsService.getExamPrepSubjects();
   }
 
+  @Get("certification")
+  getCertificationSubjects() {
+    return this.subjectsService.getCertificationSubjects();
+  }
+
   @Get(":slug")
   async findOne(@Param("slug") slug: string) {
     const subject = await this.subjectsService.findOne(slug);

@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Subject, SchoolLevel } from "@/lib/types";
+import type { Subject, SchoolLevel, Genre } from "@/lib/types";
+
+const GENRES: { value: Genre; label: string }[] = [
+  { value: "school_education", label: "学校教育" },
+  { value: "certification", label: "検定" },
+];
 
 const SCHOOL_LEVELS: { value: SchoolLevel; label: string }[] = [
   { value: "elementary", label: "小学生" },
@@ -16,6 +21,7 @@ export default function SubjectForm({ subject }: { subject?: Subject }) {
   const [name, setName] = useState(subject?.name ?? "");
   const [icon, setIcon] = useState(subject?.icon ?? "");
   const [displayOrder, setDisplayOrder] = useState(subject?.displayOrder ?? 0);
+  const [genre, setGenre] = useState<Genre>(subject?.genre ?? "school_education");
   const [schoolLevel, setSchoolLevel] = useState<SchoolLevel>(subject?.schoolLevel ?? "middle");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +35,14 @@ export default function SubjectForm({ subject }: { subject?: Subject }) {
     const res = await fetch(`/api/admin/${path}`, {
       method: subject ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug, name, icon, displayOrder: Number(displayOrder), schoolLevel }),
+      body: JSON.stringify({
+        slug,
+        name,
+        icon,
+        displayOrder: Number(displayOrder),
+        genre,
+        schoolLevel,
+      }),
     });
 
     setLoading(false);
@@ -85,19 +98,35 @@ export default function SubjectForm({ subject }: { subject?: Subject }) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">対象</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">ジャンル</label>
         <select
-          value={schoolLevel}
-          onChange={(e) => setSchoolLevel(e.target.value as SchoolLevel)}
+          value={genre}
+          onChange={(e) => setGenre(e.target.value as Genre)}
           className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-blue-400 focus:outline-none"
         >
-          {SCHOOL_LEVELS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
+          {GENRES.map((g) => (
+            <option key={g.value} value={g.value}>
+              {g.label}
             </option>
           ))}
         </select>
       </div>
+      {genre === "school_education" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">対象</label>
+          <select
+            value={schoolLevel}
+            onChange={(e) => setSchoolLevel(e.target.value as SchoolLevel)}
+            className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-blue-400 focus:outline-none"
+          >
+            {SCHOOL_LEVELS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       {error && <p className="text-red-600 text-sm">{error}</p>}
       <button
         type="submit"

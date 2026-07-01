@@ -16,4 +16,7 @@ export class CreateSubjectDto {
 
   @IsIn(["elementary", "middle", "exam_prep"])
   schoolLevel!: "elementary" | "middle" | "exam_prep";
+
+  @IsIn(["school_education", "certification"])
+  genre!: "school_education" | "certification";
 }
