@@ -21,11 +21,20 @@ export class AdminQuestionsController {
   constructor(private readonly adminQuestionsService: AdminQuestionsService) {}
 
   @Get()
-  findAll(@Query("subjectId") subjectId?: string, @Query("topicId") topicId?: string) {
-    return this.adminQuestionsService.findAll(
-      subjectId ? Number(subjectId) : undefined,
-      topicId ? Number(topicId) : undefined,
-    );
+  findAll(
+    @Query("subjectId") subjectId?: string,
+    @Query("topicId") topicId?: string,
+    @Query("keyword") keyword?: string,
+    @Query("page") page?: string,
+    @Query("pageSize") pageSize?: string,
+  ) {
+    return this.adminQuestionsService.findAll({
+      subjectId: subjectId ? Number(subjectId) : undefined,
+      topicId: topicId ? Number(topicId) : undefined,
+      keyword: keyword?.trim() || undefined,
+      page: page ? Number(page) : undefined,
+      pageSize: pageSize ? Number(pageSize) : undefined,
+    });
   }
 
   @Get(":id")

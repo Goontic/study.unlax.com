@@ -15,14 +15,34 @@ const QUESTION_INCLUDE = {
 export class AdminQuestionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(subjectId?: number, topicId?: number) {
-    return this.prisma.question.findMany({
-      where: {
-        ...(topicId ? { topicId } : {}),
-        ...(subjectId ? { topic: { subjectId } } : {}),
-      },
-      orderBy: { displayOrder: "asc" },
-    });
+  async findAll(params: {
+    subjectId?: number;
+    topicId?: number;
+    keyword?: string;
+    page?: number;
+    pageSize?: number;
+  }) {
+    const page = params.page && params.page > 0 ? Math.floor(params.page) : 1;
+    const pageSize =
+      params.pageSize && params.pageSize > 0 ? Math.min(Math.floor(params.pageSize), 100) : 20;
+
+    const where: Prisma.QuestionWhereInput = {
+      ...(params.topicId ? { topicId: params.topicId } : {}),
+      ...(params.subjectId ? { topic: { subjectId: params.subjectId } } : {}),
+      ...(params.keyword ? { body: { contains: params.keyword, mode: "insensitive" } } : {}),
+    };
+
+    const [items, total] = await Promise.all([
+      this.prisma.question.findMany({
+        where,
+        orderBy: { displayOrder: "asc" },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.question.count({ where }),
+    ]);
+
+    return { items, total, page, pageSize };
   }
 
   async findOne(id: number) {

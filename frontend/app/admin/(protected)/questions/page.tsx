@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
 import SubjectFilter from "@/components/admin/SubjectFilter";
+import KeywordSearch from "@/components/admin/KeywordSearch";
+import Pagination from "@/components/admin/Pagination";
 import type { Question, QuestionType, Subject, Topic } from "@/lib/types";
 
 const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
@@ -22,12 +24,33 @@ async function fetchJson<T>(path: string, token: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+interface QuestionListResponse {
+  items: Question[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+async function fetchQuestions(qs: URLSearchParams, token: string): Promise<QuestionListResponse> {
+  const res = await fetch(`${API_BASE}/admin/questions?${qs.toString()}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!res.ok) return { items: [], total: 0, page: 1, pageSize: 20 };
+  return res.json() as Promise<QuestionListResponse>;
+}
+
 interface Props {
-  searchParams: Promise<{ subjectId?: string; topicId?: string }>;
+  searchParams: Promise<{
+    subjectId?: string;
+    topicId?: string;
+    keyword?: string;
+    page?: string;
+  }>;
 }
 
 export default async function AdminQuestionsPage({ searchParams }: Props) {
-  const { subjectId, topicId } = await searchParams;
+  const { subjectId, topicId, keyword, page } = await searchParams;
   const token = (await getAdminToken())!;
 
   const [subjects, topics] = await Promise.all([
@@ -38,9 +61,12 @@ export default async function AdminQuestionsPage({ searchParams }: Props) {
   const qs = new URLSearchParams();
   if (subjectId) qs.set("subjectId", subjectId);
   if (topicId) qs.set("topicId", topicId);
-  const questions = await fetchJson<Question[]>(`/admin/questions?${qs.toString()}`, token);
+  if (keyword) qs.set("keyword", keyword);
+  if (page) qs.set("page", page);
+  const { items: questions, total, page: currentPage, pageSize } = await fetchQuestions(qs, token);
 
   const topicName = (id: number) => topics.find((t) => t.id === id)?.name ?? "";
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div>
@@ -54,8 +80,9 @@ export default async function AdminQuestionsPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap gap-3 items-center">
         <SubjectFilter subjects={subjects} basePath="/admin/questions" value={subjectId} />
+        <KeywordSearch basePath="/admin/questions" value={keyword} />
       </div>
 
       <div className="space-y-2">
@@ -82,6 +109,8 @@ export default async function AdminQuestionsPage({ searchParams }: Props) {
           <p className="text-gray-500 text-sm">問題がまだ登録されていません。</p>
         )}
       </div>
+
+      <Pagination basePath="/admin/questions" page={currentPage} totalPages={totalPages} />
     </div>
   );
 }
