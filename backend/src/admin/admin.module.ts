@@ -6,10 +6,17 @@ import { AdminTopicsController } from "./topics/admin-topics.controller";
 import { AdminTopicsService } from "./topics/admin-topics.service";
 import { AdminQuestionsController } from "./questions/admin-questions.controller";
 import { AdminQuestionsService } from "./questions/admin-questions.service";
+import { AdminAdminsController } from "./admins/admin-admins.controller";
+import { AdminAdminsService } from "./admins/admin-admins.service";
 
 @Module({
   imports: [AdminAuthModule],
-  controllers: [AdminSubjectsController, AdminTopicsController, AdminQuestionsController],
-  providers: [AdminSubjectsService, AdminTopicsService, AdminQuestionsService],
+  controllers: [
+    AdminSubjectsController,
+    AdminTopicsController,
+    AdminQuestionsController,
+    AdminAdminsController,
+  ],
+  providers: [AdminSubjectsService, AdminTopicsService, AdminQuestionsService, AdminAdminsService],
 })
 export class AdminModule {}

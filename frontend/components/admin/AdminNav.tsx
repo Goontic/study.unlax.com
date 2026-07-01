@@ -15,6 +15,9 @@ export default function AdminNav() {
           <Link href="/admin/questions" className="text-gray-700 hover:text-blue-600">
             問題
           </Link>
+          <Link href="/admin/admins" className="text-gray-700 hover:text-blue-600">
+            管理者
+          </Link>
         </nav>
         <AdminLogoutButton />
       </div>

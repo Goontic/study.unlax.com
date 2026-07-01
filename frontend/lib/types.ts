@@ -23,6 +23,14 @@ export interface SubjectWithTopics extends Subject {
   topics: Topic[];
 }
 
+export interface AdminUser {
+  id: number;
+  email: string;
+  displayName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface QuestionChoice {
   id: number;
   body: string;

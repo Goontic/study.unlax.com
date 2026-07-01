@@ -10,8 +10,13 @@ export default function DeleteButton({ path }: { path: string }) {
   const handleDelete = async () => {
     if (!confirm("本当に削除しますか？")) return;
     setLoading(true);
-    await fetch(`/api/admin/${path}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/${path}`, { method: "DELETE" });
     setLoading(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      alert(data?.message ?? "削除に失敗しました");
+      return;
+    }
     router.refresh();
   };
 
