@@ -1,0 +1,27 @@
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+.next/
+**/.next/
+
+# Environment variables (secrets)
+.env
+.env.local
+**/.env
+**/.env.local
+docker/.env.backend
+docker/.env.frontend
+
+# Git
+.git/
+
+# Logs
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
