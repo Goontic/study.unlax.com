@@ -52,6 +52,7 @@ export default function QuestionForm({
   );
 
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const filteredTopics = useMemo(
@@ -65,14 +66,14 @@ export default function QuestionForm({
     setTopicId(first?.id);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (continueAfterSave: boolean) => {
     if (!topicId) {
       setError("単元を選択してください");
       return;
     }
     setLoading(true);
     setError("");
+    setSuccessMessage("");
 
     const payload = {
       topicId,
@@ -108,8 +109,26 @@ export default function QuestionForm({
       setError(data?.message ?? "保存に失敗しました");
       return;
     }
+
+    if (continueAfterSave && !question) {
+      setBody("");
+      setChoices([]);
+      setBlankAnswers([]);
+      setOrderItems([]);
+      setSteps([]);
+      setDisplayOrder((prev) => prev + 1);
+      setSuccessMessage("保存しました。続けて次の問題を入力できます。");
+      return;
+    }
+
     router.push("/admin/questions");
     router.refresh();
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    void submit(submitter?.value === "save-continue");
   };
 
   return (
@@ -209,13 +228,29 @@ export default function QuestionForm({
       <StepsEditor steps={steps} onChange={setSteps} />
 
       {error && <p className="text-red-600 text-sm">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
-      >
-        {loading ? "保存中…" : "保存"}
-      </button>
+      {successMessage && <p className="text-green-600 text-sm">{successMessage}</p>}
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          name="intent"
+          value="save"
+          disabled={loading}
+          className="flex-1 rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
+        >
+          {loading ? "保存中…" : "保存"}
+        </button>
+        {!question && (
+          <button
+            type="submit"
+            name="intent"
+            value="save-continue"
+            disabled={loading}
+            className="flex-1 rounded-xl bg-gray-100 text-gray-800 font-bold py-4 text-base disabled:opacity-40 active:bg-gray-200 transition-colors min-h-[56px]"
+          >
+            {loading ? "保存中…" : "保存して続けて登録"}
+          </button>
+        )}
+      </div>
     </form>
   );
 }
