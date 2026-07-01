@@ -32,6 +32,17 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
 enum SchoolLevel {
   elementary
   middle
@@ -57,7 +68,7 @@ model Topic {
   name         String
   gradeLevel   Int
   displayOrder Int        @default(0)
-  subject      Subject    @relation(fields: [subjectId], references: [id])
+  subject      Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   questions    Question[]
 
   @@unique([subjectId, slug])
@@ -79,7 +90,7 @@ model Question {
   difficulty   Int                   @default(3)
   displayOrder Int                   @default(0)
   createdAt    DateTime              @default(now())
-  topic        Topic                 @relation(fields: [topicId], references: [id])
+  topic        Topic                 @relation(fields: [topicId], references: [id], onDelete: Cascade)
   choices      QuestionChoice[]
   blankAnswers QuestionBlankAnswer[]
   orderItems   QuestionOrderItem[]
