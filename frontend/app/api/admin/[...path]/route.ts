@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
 
@@ -23,6 +24,11 @@ async function proxy(req: NextRequest, path: string[]) {
 
   const res = await fetch(targetUrl, init);
   const data = await res.json().catch(() => null);
+
+  if (res.ok && req.method !== "GET") {
+    revalidatePath("/", "layout");
+  }
+
   return NextResponse.json(data, { status: res.status });
 }
 
