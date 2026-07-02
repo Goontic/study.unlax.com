@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import Script from "next/script";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
@@ -54,9 +55,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        <Header />
-        <main className="flex-1 pb-20">{children}</main>
-        <BottomNav />
+        <SessionProvider>
+          <Header />
+          <main className="flex-1 pb-20">{children}</main>
+          <BottomNav />
+        </SessionProvider>
       </body>
     </html>
   );
