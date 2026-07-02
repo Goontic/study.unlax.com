@@ -18,6 +18,7 @@ export interface Topic {
   slug: string;
   name: string;
   gradeLevel: number;
+  description?: string | null;
   displayOrder: number;
 }
 

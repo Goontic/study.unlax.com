@@ -30,6 +30,11 @@ export class SubjectsController {
     return this.subjectsService.getCertificationSubjects();
   }
 
+  @Get("sitemap-entries")
+  getSitemapEntries() {
+    return this.subjectsService.getSitemapEntries();
+  }
+
   @Get(":slug")
   async findOne(@Param("slug") slug: string) {
     const subject = await this.subjectsService.findOne(slug);

@@ -72,9 +72,10 @@ export default function HomePage() {
       <section className="relative overflow-hidden min-h-[400px]">
         {/* 背景画像 */}
         <Image
-          src="/images/hero-bg.png"
+          src="/images/hero-bg.webp"
           alt=""
           fill
+          sizes="100vw"
           className="object-cover object-center"
           priority
           unoptimized

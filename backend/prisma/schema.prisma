@@ -77,6 +77,8 @@ model Topic {
   name         String
   // 学校教育科目では学年(1〜6等)、検定科目では級を表す汎用フィールド
   gradeLevel   Int
+  // 単元の要点まとめ（公開ページに表示するSEO用解説。改行区切りの平文）
+  description  String?
   displayOrder Int        @default(0)
   subject      Subject    @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   questions    Question[]

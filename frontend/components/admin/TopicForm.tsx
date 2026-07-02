@@ -20,6 +20,7 @@ export default function TopicForm({
   const [slug, setSlug] = useState(topic?.slug ?? "");
   const [name, setName] = useState(topic?.name ?? "");
   const [gradeLevel, setGradeLevel] = useState(topic?.gradeLevel ?? 1);
+  const [description, setDescription] = useState(topic?.description ?? "");
   const [displayOrder, setDisplayOrder] = useState(topic?.displayOrder ?? 0);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ export default function TopicForm({
         slug,
         name,
         gradeLevel: Number(gradeLevel),
+        description: description.trim() || null,
         displayOrder: Number(displayOrder),
       }),
     });
@@ -95,6 +97,16 @@ export default function TopicForm({
           value={gradeLevel}
           onChange={(e) => setGradeLevel(Number(e.target.value))}
           required
+          className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-blue-400 focus:outline-none"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">要点まとめ（公開ページに表示・空欄可）</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={5}
+          placeholder={"この単元で学ぶ内容の説明や覚えるポイントを入力\n・箇条書きも使えます"}
           className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-base focus:border-blue-400 focus:outline-none"
         />
       </div>

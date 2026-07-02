@@ -12,6 +12,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://study.unlax.com"),
   title: {
     default: "ポケスタ | 小中学生の受験対策・無料ドリル5科目",
     template: "%s | ポケスタ",
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
     siteName: "ポケスタ",
     locale: "ja_JP",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

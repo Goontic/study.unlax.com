@@ -1,4 +1,4 @@
-import { IsInt, IsString, Matches } from "class-validator";
+import { IsInt, IsOptional, IsString, Matches } from "class-validator";
 
 export class CreateTopicDto {
   @IsInt()
@@ -13,6 +13,10 @@ export class CreateTopicDto {
 
   @IsInt()
   gradeLevel!: number;
+
+  @IsOptional()
+  @IsString()
+  description?: string | null;
 
   @IsInt()
   displayOrder!: number;

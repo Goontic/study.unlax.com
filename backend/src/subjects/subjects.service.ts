@@ -80,6 +80,26 @@ export class SubjectsService {
     });
   }
 
+  // sitemap.xml 生成用: 全科目→単元→問題ID を1クエリで返す
+  getSitemapEntries() {
+    return this.prisma.subject.findMany({
+      orderBy: { displayOrder: "asc" },
+      select: {
+        slug: true,
+        topics: {
+          orderBy: [{ gradeLevel: "asc" }, { displayOrder: "asc" }],
+          select: {
+            slug: true,
+            questions: {
+              orderBy: { displayOrder: "asc" },
+              select: { id: true, createdAt: true },
+            },
+          },
+        },
+      },
+    });
+  }
+
   getQuestions(subjectSlug: string, topicSlug: string) {
     return this.prisma.question.findMany({
       where: { topic: { slug: topicSlug, subject: { slug: subjectSlug } } },
