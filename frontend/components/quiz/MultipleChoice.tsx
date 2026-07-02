@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { QuestionChoice, QuestionStep } from "@/lib/types";
+import Feedback from "./Feedback";
 
 interface Props {
   questionId: number;
@@ -12,6 +12,8 @@ interface Props {
   nextHref: string;
   isLast: boolean;
 }
+
+const CHOICE_LABELS = ["A", "B", "C", "D", "E", "F"];
 
 export default function MultipleChoice({ questionId, body, choices, steps, nextHref, isLast }: Props) {
   const [selected, setSelected] = useState<number | null>(null);
@@ -30,77 +32,55 @@ export default function MultipleChoice({ questionId, body, choices, steps, nextH
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
         <p className="text-gray-800 leading-relaxed text-base font-medium">{body}</p>
       </div>
 
       <div className="space-y-3">
         {[...choices]
           .sort((a, b) => a.displayOrder - b.displayOrder)
-          .map((choice) => {
-            let style =
-              "w-full text-left rounded-xl border-2 px-5 py-4 text-base font-medium transition-colors min-h-[56px]";
+          .map((choice, idx) => {
+            let card =
+              "w-full flex items-center gap-3 text-left rounded-2xl border-2 px-4 py-4 text-base font-medium transition-all min-h-[56px]";
+            let badge =
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-black";
             if (!answered) {
-              style += " bg-white border-gray-200 active:bg-gray-50";
+              card +=
+                " bg-white border-gray-200 hover:border-emerald-300 hover:bg-emerald-50/50 active:scale-[0.98] cursor-pointer";
+              badge += " bg-gray-100 text-gray-500";
             } else if (choice.isCorrect) {
-              style += " bg-green-50 border-green-400 text-green-800";
+              card += " bg-emerald-50 border-emerald-400 text-emerald-800 animate-pop";
+              badge += " bg-emerald-500 text-white";
             } else if (choice.id === selected) {
-              style += " bg-red-50 border-red-400 text-red-800";
+              card += " bg-rose-50 border-rose-400 text-rose-800 animate-shake";
+              badge += " bg-rose-500 text-white";
             } else {
-              style += " bg-gray-50 border-gray-200 text-gray-400";
+              card += " bg-gray-50 border-gray-200 text-gray-400";
+              badge += " bg-gray-100 text-gray-400";
             }
 
             return (
               <button
                 key={choice.id}
-                className={style}
+                className={card}
                 onClick={() => handleSelect(choice.id, choice.isCorrect)}
                 disabled={answered}
               >
-                {choice.body}
+                <span className={badge} aria-hidden>
+                  {answered && choice.isCorrect
+                    ? "✓"
+                    : answered && choice.id === selected
+                      ? "✗"
+                      : CHOICE_LABELS[idx]}
+                </span>
+                <span className="flex-1">{choice.body}</span>
               </button>
             );
           })}
       </div>
 
       {answered && (
-        <div
-          className={`rounded-xl border-2 p-5 ${
-            correct
-              ? "bg-green-50 border-green-300"
-              : "bg-red-50 border-red-300"
-          }`}
-        >
-          <p className={`font-bold mb-3 text-lg ${correct ? "text-green-700" : "text-red-700"}`}>
-            {correct ? "正解！" : "不正解…"}
-          </p>
-          {steps.length > 0 && (
-            <div className="space-y-2">
-              <p className="font-bold text-gray-700 text-sm">解説</p>
-              {steps
-                .sort((a, b) => a.stepNumber - b.stepNumber)
-                .map((step) => (
-                  <p key={step.id} className="text-gray-700 text-sm leading-relaxed">
-                    {step.stepNumber > 1 && (
-                      <span className="font-bold text-gray-500 mr-1">
-                        手順{step.stepNumber}:
-                      </span>
-                    )}
-                    {step.body}
-                  </p>
-                ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {answered && (
-        <Link
-          href={nextHref}
-          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
-        >
-          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
-        </Link>
+        <Feedback correct={!!correct} steps={steps} nextHref={nextHref} isLast={isLast} />
       )}
     </div>
   );

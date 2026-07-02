@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { QuestionStep } from "@/lib/types";
+import Feedback from "./Feedback";
 
 interface Props {
   questionId: number;
@@ -35,7 +35,7 @@ export default function TextInput({ questionId, body, correctAnswer, steps, next
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
         <p className="text-gray-800 leading-relaxed text-base font-medium">{body}</p>
       </div>
 
@@ -44,9 +44,18 @@ export default function TextInput({ questionId, body, correctAnswer, steps, next
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSubmit();
+          }}
           disabled={submitted}
           placeholder="答えを入力してください"
-          className="w-full rounded-xl border-2 border-gray-200 px-5 py-4 text-base focus:border-blue-400 focus:outline-none disabled:bg-gray-50 disabled:text-gray-500"
+          className={`w-full rounded-2xl border-2 px-5 py-4 text-base transition-colors focus:outline-none disabled:bg-gray-50 ${
+            !submitted
+              ? "border-gray-200 focus:border-emerald-400 bg-white"
+              : correct
+                ? "border-emerald-400 bg-emerald-50 text-emerald-800"
+                : "border-rose-400 bg-rose-50 text-rose-800"
+          }`}
         />
       </div>
 
@@ -54,53 +63,20 @@ export default function TextInput({ questionId, body, correctAnswer, steps, next
         <button
           onClick={handleSubmit}
           disabled={!value.trim()}
-          className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
+          className="w-full min-h-[56px] rounded-2xl bg-emerald-500 py-4 text-base font-black text-white shadow-md shadow-emerald-200 transition-all hover:bg-emerald-600 active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
           答え合わせ
         </button>
       )}
 
       {submitted && (
-        <div
-          className={`rounded-xl border-2 p-5 ${
-            correct ? "bg-green-50 border-green-300" : "bg-red-50 border-red-300"
-          }`}
-        >
-          <p className={`font-bold mb-1 text-lg ${correct ? "text-green-700" : "text-red-700"}`}>
-            {correct ? "正解！" : "不正解…"}
-          </p>
+        <Feedback correct={correct} steps={steps} nextHref={nextHref} isLast={isLast}>
           {!correct && (
-            <p className="text-sm text-gray-700 mb-3">
-              正解：<span className="font-bold">{correctAnswer}</span>
+            <p className="text-sm text-gray-700">
+              正解：<span className="font-black text-gray-900">{correctAnswer}</span>
             </p>
           )}
-          {steps.length > 0 && (
-            <div className="space-y-2">
-              <p className="font-bold text-gray-700 text-sm">解説</p>
-              {steps
-                .sort((a, b) => a.stepNumber - b.stepNumber)
-                .map((step) => (
-                  <p key={step.id} className="text-gray-700 text-sm leading-relaxed">
-                    {step.stepNumber > 1 && (
-                      <span className="font-bold text-gray-500 mr-1">
-                        手順{step.stepNumber}:
-                      </span>
-                    )}
-                    {step.body}
-                  </p>
-                ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {submitted && (
-        <Link
-          href={nextHref}
-          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
-        >
-          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
-        </Link>
+        </Feedback>
       )}
     </div>
   );

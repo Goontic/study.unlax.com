@@ -84,14 +84,14 @@ export default async function GradeSelector() {
                   <span className="text-2xl" aria-hidden>{emoji}</span>
                   <h3 className="text-base font-black text-white">{label}</h3>
                 </div>
-                <span className="text-white/80 text-sm font-bold group-active:text-white">すべて見る ›</span>
+                <span className="text-white/80 text-sm font-bold transition-colors group-hover:text-white group-active:text-white">すべて見る ›</span>
               </Link>
               <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-5">
                 {subjects.map((subject) => (
                   <Link
                     key={subject.slug}
                     href={`/grade/${level}/${subject.slug}`}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 ${chipBg}`}
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 ${chipBg}`}
                   >
                     <span className="text-2xl mb-1">{subject.icon}</span>
                     <span className="text-xs font-bold leading-tight">{subject.name}</span>
@@ -119,14 +119,14 @@ export default async function GradeSelector() {
                 <span className="text-2xl" aria-hidden>🏆</span>
                 <h3 className="text-base font-black text-white">入試対策 全5科目</h3>
               </div>
-              <span className="text-white/80 text-sm font-bold group-active:text-white">すべて見る ›</span>
+              <span className="text-white/80 text-sm font-bold transition-colors group-hover:text-white group-active:text-white">すべて見る ›</span>
             </Link>
             <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-5">
               {examPrepSubjects.map((subject) => (
                 <Link
                   key={subject.slug}
                   href={`/${subject.slug}`}
-                  className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 bg-red-50 border-red-300 text-red-700 active:bg-red-100"
+                  className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 bg-red-50 border-red-300 text-red-700 active:bg-red-100"
                 >
                   <span className="text-2xl mb-1">{subject.icon}</span>
                   <span className="text-xs font-bold leading-tight">{subject.name}</span>
@@ -155,14 +155,14 @@ export default async function GradeSelector() {
                     <span className="text-2xl" aria-hidden>{emoji}</span>
                     <h3 className="text-base font-black text-white">{label}</h3>
                   </div>
-                  <span className="text-white/80 text-sm font-bold group-active:text-white">すべて見る ›</span>
+                  <span className="text-white/80 text-sm font-bold transition-colors group-hover:text-white group-active:text-white">すべて見る ›</span>
                 </Link>
                 <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-5">
                   {subjects.map((subject) => (
                     <Link
                       key={subject.slug}
                       href={`/${subject.slug}`}
-                      className={`flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 ${chipBg}`}
+                      className={`flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 ${chipBg}`}
                     >
                       <span className="text-2xl mb-1">{subject.icon}</span>
                       <span className="text-xs font-bold leading-tight">{subject.name}</span>
@@ -196,14 +196,14 @@ export default async function GradeSelector() {
               <span className="text-2xl" aria-hidden>📖</span>
               <h3 className="text-base font-black text-white">検定対策</h3>
             </div>
-            <span className="text-white/80 text-sm font-bold group-active:text-white">すべて見る ›</span>
+            <span className="text-white/80 text-sm font-bold transition-colors group-hover:text-white group-active:text-white">すべて見る ›</span>
           </Link>
           <div className="grid grid-cols-3 gap-3 p-4 sm:grid-cols-5">
             {certificationSubjects.map((subject) => (
               <Link
                 key={subject.slug}
                 href={`/${subject.slug}`}
-                className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center transition-all active:scale-95 active:opacity-70 bg-indigo-50 border-indigo-300 text-indigo-700 active:bg-indigo-100"
+                className="flex flex-col items-center justify-center rounded-2xl border-2 py-3 px-2 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 bg-indigo-50 border-indigo-300 text-indigo-700 active:bg-indigo-100"
               >
                 <span className="text-2xl mb-1">{subject.icon}</span>
                 <span className="text-xs font-bold leading-tight">{subject.name}</span>

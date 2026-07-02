@@ -90,30 +90,34 @@ export default async function QuestionPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-3xl mx-auto px-4 py-5 space-y-6">
         <div>
-          <p className="text-sm text-gray-400 mb-1">
-            <Link href={`/${subjectSlug}`} className="hover:underline">
-              {subject.name}
-            </Link>{" "}
-            ›{" "}
-            <Link href={`/${subjectSlug}/${topicSlug}`} className="hover:underline">
-              {topic.name}
-            </Link>{" "}
-            ›
-          </p>
-          <div className="flex items-center justify-between">
-            <h1 className="text-base font-bold text-gray-700">問題</h1>
-            <span className="text-sm text-gray-400">
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${subjectSlug}/${topicSlug}`}
+              aria-label={`${topic.name}の問題一覧に戻る`}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            >
+              ✕
+            </Link>
+            <div
+              className="h-3.5 flex-1 rounded-full bg-gray-200 overflow-hidden"
+              role="progressbar"
+              aria-valuenow={currentIndex + 1}
+              aria-valuemax={sorted.length}
+            >
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${((currentIndex + 1) / sorted.length) * 100}%` }}
+              />
+            </div>
+            <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-black text-emerald-700">
               {currentIndex + 1} / {sorted.length}
             </span>
           </div>
-          <div className="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-blue-400 transition-all"
-              style={{ width: `${((currentIndex + 1) / sorted.length) * 100}%` }}
-            />
-          </div>
+          <h1 className="mt-3 text-sm font-bold text-gray-500">
+            {subject.icon} {subject.name}｜{topic.name}
+          </h1>
         </div>
 
         {question.type === "multiple_choice" && (

@@ -81,25 +81,33 @@ export default async function SubjectPage({ params }: Props) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <p className="text-sm text-gray-400 mb-1">
-          <Link href={backHref} className="hover:underline">
-            {breadcrumbLabel}
-          </Link>
-          {" ›"}
-        </p>
-        <h1 className="text-2xl font-bold text-gray-800">
-          {subjectData.icon} {subjectData.name}
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">
-          {isExamPrep ? "入試傾向別に対策しよう" : "単元を選んで問題を解こう"}
-        </p>
+        <Link
+          href={backHref}
+          className="mb-3 inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-700"
+        >
+          ‹ {breadcrumbLabel}
+        </Link>
+        <div className="flex items-center gap-3">
+          <span
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-gray-200 text-2xl shadow-sm"
+            aria-hidden
+          >
+            {subjectData.icon}
+          </span>
+          <div>
+            <h1 className="text-2xl font-black text-gray-800">{subjectData.name}</h1>
+            <p className="text-gray-500 text-sm mt-0.5">
+              {isExamPrep ? "入試傾向別に対策しよう" : "単元を選んで問題を解こう"}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-8">
         {grades.map((grade) => (
           <section key={grade}>
             {!isExamPrep && (
-              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-3">
+              <h2 className="mb-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700">
                 {gradeLabel(grade)}
               </h2>
             )}
@@ -108,10 +116,10 @@ export default async function SubjectPage({ params }: Props) {
                 <li key={topic.id}>
                   <Link
                     href={`/${slug}/${topic.slug}`}
-                    className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-5 py-4 shadow-sm active:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between rounded-2xl bg-white border border-gray-200 px-5 py-4 shadow-sm transition-colors hover:border-emerald-300 hover:bg-emerald-50/40 active:bg-gray-50"
                   >
-                    <span className="font-medium text-gray-800">{topic.name}</span>
-                    <span className="text-gray-400">›</span>
+                    <span className="font-bold text-gray-800">{topic.name}</span>
+                    <span className="text-gray-300">›</span>
                   </Link>
                 </li>
               ))}

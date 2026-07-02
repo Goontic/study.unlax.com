@@ -55,13 +55,13 @@ export default async function TopicPage({ params }: Props) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <p className="text-sm text-gray-400 mb-1">
-          <Link href={`/${subjectSlug}`} className="hover:underline">
-            科目
-          </Link>{" "}
-          ›
-        </p>
-        <h1 className="text-2xl font-bold text-gray-800">{topicData.name}</h1>
+        <Link
+          href={`/${subjectSlug}`}
+          className="mb-3 inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-700"
+        >
+          ‹ 単元一覧へ
+        </Link>
+        <h1 className="text-2xl font-black text-gray-800">{topicData.name}</h1>
         <p className="text-gray-500 text-sm mt-1">全{questions.length}問</p>
       </div>
 

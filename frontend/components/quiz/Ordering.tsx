@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { QuestionOrderItem, QuestionStep } from "@/lib/types";
+import Feedback from "./Feedback";
 
 interface Props {
   questionId: number;
@@ -14,8 +14,9 @@ interface Props {
 }
 
 export default function Ordering({ questionId, body, orderItems, steps, nextHref, isLast }: Props) {
-  const shuffled = [...orderItems].sort(() => Math.random() - 0.5);
-  const [remaining, setRemaining] = useState<QuestionOrderItem[]>(shuffled);
+  const [remaining, setRemaining] = useState<QuestionOrderItem[]>(() =>
+    [...orderItems].sort(() => Math.random() - 0.5),
+  );
   const [selected, setSelected] = useState<QuestionOrderItem[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
@@ -50,24 +51,37 @@ export default function Ordering({ questionId, body, orderItems, steps, nextHref
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
         <p className="text-gray-800 leading-relaxed text-base font-medium">{body}</p>
       </div>
 
       <div>
-        <p className="text-xs text-gray-500 mb-2 font-medium">タップして正しい順番に並べよう</p>
-        <div className="min-h-[60px] rounded-xl border-2 border-dashed border-blue-200 bg-blue-50 p-3 flex flex-wrap gap-2">
-          {selected.map((item, idx) => (
-            <button
-              key={item.id}
-              onClick={() => handleUnselect(item)}
-              disabled={submitted}
-              className="flex items-center gap-2 rounded-lg bg-white border border-blue-300 px-3 py-2 text-sm font-medium text-gray-800 shadow-sm active:opacity-70 disabled:opacity-100"
-            >
-              <span className="text-blue-600 font-bold">{idx + 1}.</span>
-              {item.body}
-            </button>
-          ))}
+        <p className="text-xs text-gray-500 mb-2 font-bold">
+          👆 タップして正しい順番に並べよう（もう一度タップで戻せます）
+        </p>
+        <div className="min-h-[64px] rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/60 p-3 flex flex-wrap gap-2">
+          {selected.map((item, idx) => {
+            let style = "bg-white border-emerald-300";
+            if (submitted) {
+              style =
+                item.correctPosition === idx + 1
+                  ? "bg-emerald-50 border-emerald-400 text-emerald-800"
+                  : "bg-rose-50 border-rose-400 text-rose-800";
+            }
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleUnselect(item)}
+                disabled={submitted}
+                className={`flex items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm font-medium text-gray-800 shadow-sm transition-all active:scale-95 disabled:active:scale-100 ${style}`}
+              >
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-black text-white">
+                  {idx + 1}
+                </span>
+                {item.body}
+              </button>
+            );
+          })}
           {selected.length === 0 && (
             <span className="text-gray-400 text-sm self-center">ここに並べます</span>
           )}
@@ -79,7 +93,7 @@ export default function Ordering({ questionId, body, orderItems, steps, nextHref
           <button
             key={item.id}
             onClick={() => handleSelect(item)}
-            className="rounded-lg bg-white border-2 border-gray-200 px-4 py-2 text-sm font-medium text-gray-800 active:bg-gray-50 transition-colors"
+            className="rounded-xl bg-white border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-800 shadow-sm transition-all hover:border-emerald-300 hover:bg-emerald-50/50 active:scale-95"
           >
             {item.body}
           </button>
@@ -89,65 +103,35 @@ export default function Ordering({ questionId, body, orderItems, steps, nextHref
       {!submitted && done && (
         <button
           onClick={handleSubmit}
-          className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base active:bg-blue-700 transition-colors min-h-[56px]"
+          className="w-full min-h-[56px] rounded-2xl bg-emerald-500 py-4 text-base font-black text-white shadow-md shadow-emerald-200 transition-all hover:bg-emerald-600 active:scale-[0.98] animate-slide-up"
         >
           答え合わせ
         </button>
       )}
 
       {submitted && (
-        <div
-          className={`rounded-xl border-2 p-5 ${
-            correct ? "bg-green-50 border-green-300" : "bg-red-50 border-red-300"
-          }`}
-        >
-          <p className={`font-bold mb-3 text-lg ${correct ? "text-green-700" : "text-red-700"}`}>
-            {correct ? "正解！" : "不正解…"}
-          </p>
+        <Feedback correct={correct} steps={steps} nextHref={nextHref} isLast={isLast}>
           {!correct && (
-            <div className="mb-3">
-              <p className="text-sm font-bold text-gray-700 mb-1">正しい順番：</p>
+            <div>
+              <p className="text-sm font-black text-gray-700 mb-1.5">正しい順番：</p>
               <div className="flex flex-wrap gap-2">
                 {[...orderItems]
                   .sort((a, b) => a.correctPosition - b.correctPosition)
                   .map((item, idx) => (
                     <span
                       key={item.id}
-                      className="rounded-lg bg-white border border-gray-300 px-3 py-1 text-sm text-gray-800"
+                      className="flex items-center gap-1.5 rounded-xl bg-white border border-gray-300 px-3 py-1.5 text-sm text-gray-800"
                     >
-                      {idx + 1}. {item.body}
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-[11px] font-black text-gray-600">
+                        {idx + 1}
+                      </span>
+                      {item.body}
                     </span>
                   ))}
               </div>
             </div>
           )}
-          {steps.length > 0 && (
-            <div className="space-y-2">
-              <p className="font-bold text-gray-700 text-sm">解説</p>
-              {steps
-                .sort((a, b) => a.stepNumber - b.stepNumber)
-                .map((step) => (
-                  <p key={step.id} className="text-gray-700 text-sm leading-relaxed">
-                    {step.stepNumber > 1 && (
-                      <span className="font-bold text-gray-500 mr-1">
-                        手順{step.stepNumber}:
-                      </span>
-                    )}
-                    {step.body}
-                  </p>
-                ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {submitted && (
-        <Link
-          href={nextHref}
-          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
-        >
-          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
-        </Link>
+        </Feedback>
       )}
     </div>
   );

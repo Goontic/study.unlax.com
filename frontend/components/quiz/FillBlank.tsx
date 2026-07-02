@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import type { QuestionBlankAnswer, QuestionStep } from "@/lib/types";
+import Feedback from "./Feedback";
 
 interface Props {
   questionId: number;
@@ -44,17 +44,19 @@ export default function FillBlank({ questionId, body, blankAnswers, steps, nextH
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
-        <p className="text-gray-800 leading-relaxed text-base font-medium">
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+        <p className="text-gray-800 leading-loose text-base font-medium">
           {parts.map((part, i) => {
             const match = part.match(/\{\{(\d+)\}\}/);
             if (!match) return <span key={i}>{part}</span>;
             const idx = Number(match[1]);
             const ba = blankAnswers.find((b) => b.blankIndex === idx);
 
-            let borderColor = "border-blue-300";
+            let style = "border-emerald-300 focus:border-emerald-500 bg-emerald-50/50";
             if (submitted && ba) {
-              borderColor = isCorrect(ba) ? "border-green-400" : "border-red-400";
+              style = isCorrect(ba)
+                ? "border-emerald-400 bg-emerald-50 text-emerald-800"
+                : "border-rose-400 bg-rose-50 text-rose-800";
             }
 
             return (
@@ -66,8 +68,8 @@ export default function FillBlank({ questionId, body, blankAnswers, steps, nextH
                   setInputs((prev) => ({ ...prev, [idx]: e.target.value }))
                 }
                 disabled={submitted}
-                className={`inline-block w-24 border-b-2 ${borderColor} text-center text-base focus:outline-none bg-transparent mx-1 disabled:text-gray-600`}
-                placeholder={`　${idx}　`}
+                className={`inline-block w-24 rounded-lg border-2 ${style} text-center text-base focus:outline-none mx-1 py-0.5 transition-colors`}
+                placeholder={`${idx}`}
               />
             );
           })}
@@ -78,58 +80,29 @@ export default function FillBlank({ questionId, body, blankAnswers, steps, nextH
         <button
           onClick={handleSubmit}
           disabled={!allFilled}
-          className="w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base disabled:opacity-40 active:bg-blue-700 transition-colors min-h-[56px]"
+          className="w-full min-h-[56px] rounded-2xl bg-emerald-500 py-4 text-base font-black text-white shadow-md shadow-emerald-200 transition-all hover:bg-emerald-600 active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
           答え合わせ
         </button>
       )}
 
       {submitted && (
-        <div
-          className={`rounded-xl border-2 p-5 ${
-            allCorrect ? "bg-green-50 border-green-300" : "bg-red-50 border-red-300"
-          }`}
-        >
-          <p className={`font-bold mb-3 text-lg ${allCorrect ? "text-green-700" : "text-red-700"}`}>
-            {allCorrect ? "正解！" : "不正解…"}
-          </p>
+        <Feedback correct={allCorrect} steps={steps} nextHref={nextHref} isLast={isLast}>
           {!allCorrect && (
-            <div className="mb-3 space-y-1">
-              {sorted.map((ba) => (
-                <p key={ba.id} className="text-sm text-gray-700">
-                  {`[${ba.blankIndex}]`}の正解：
-                  <span className="font-bold">{ba.correctAnswer}</span>
-                </p>
-              ))}
-            </div>
-          )}
-          {steps.length > 0 && (
-            <div className="space-y-2">
-              <p className="font-bold text-gray-700 text-sm">解説</p>
-              {steps
-                .sort((a, b) => a.stepNumber - b.stepNumber)
-                .map((step) => (
-                  <p key={step.id} className="text-gray-700 text-sm leading-relaxed">
-                    {step.stepNumber > 1 && (
-                      <span className="font-bold text-gray-500 mr-1">
-                        手順{step.stepNumber}:
-                      </span>
-                    )}
-                    {step.body}
+            <div className="space-y-1">
+              {sorted
+                .filter((ba) => !isCorrect(ba))
+                .map((ba) => (
+                  <p key={ba.id} className="text-sm text-gray-700">
+                    <span className="mr-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white text-[11px] font-black text-gray-500">
+                      {ba.blankIndex}
+                    </span>
+                    正解：<span className="font-black text-gray-900">{ba.correctAnswer}</span>
                   </p>
                 ))}
             </div>
           )}
-        </div>
-      )}
-
-      {submitted && (
-        <Link
-          href={nextHref}
-          className="block w-full rounded-xl bg-blue-600 text-white font-bold py-4 text-base text-center active:bg-blue-700 transition-colors min-h-[56px] leading-[56px]"
-        >
-          {isLast ? "単元一覧に戻る" : "次の問題へ →"}
-        </Link>
+        </Feedback>
       )}
     </div>
   );

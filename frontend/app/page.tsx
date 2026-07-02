@@ -130,7 +130,7 @@ export default function HomePage() {
           {CATEGORIES.map((cat) => (
             <Link key={cat.label} href={cat.href} className="group">
               <div
-                className={`relative bg-gradient-to-br ${cat.gradient} rounded-2xl overflow-hidden shadow-md min-h-[110px] flex flex-col items-center justify-end pb-3 pt-2 group-active:opacity-80 transition-opacity`}
+                className={`relative bg-gradient-to-br ${cat.gradient} rounded-2xl overflow-hidden shadow-md min-h-[110px] flex flex-col items-center justify-end pb-3 pt-2 transition-all group-hover:-translate-y-0.5 group-hover:shadow-lg group-active:opacity-80`}
               >
                 {/* カテゴリー画像（/public/images/cat-*.png を配置） */}
                 <div className="absolute inset-0">

@@ -30,11 +30,13 @@ export default async function ExamPrepPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <p className="text-sm text-gray-400 mb-1">
-          <Link href="/" className="hover:underline">トップ</Link>
-          {" ›"}
-        </p>
-        <h1 className="text-2xl font-bold text-gray-800">🎯 高校入試対策</h1>
+        <Link
+          href="/"
+          className="mb-3 inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-700"
+        >
+          ‹ ホーム
+        </Link>
+        <h1 className="text-2xl font-black text-gray-800">🎯 高校入試対策</h1>
         <p className="text-gray-500 text-sm mt-1">入試傾向に合わせたオリジナル問題で効率よく対策しよう</p>
       </div>
 
@@ -45,7 +47,7 @@ export default async function ExamPrepPage() {
             <Link
               key={subject.slug}
               href={`/${subject.slug}`}
-              className={`flex flex-col items-center justify-center rounded-2xl border-2 py-5 px-3 text-center transition-all active:scale-95 active:opacity-70 ${colorClass}`}
+              className={`flex flex-col items-center justify-center rounded-2xl border-2 py-5 px-3 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-95 ${colorClass}`}
             >
               <span className="text-3xl mb-2">{subject.icon}</span>
               <span className="text-sm font-bold leading-tight">{subject.name}</span>

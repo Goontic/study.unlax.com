@@ -37,10 +37,13 @@ export default async function GradePage({ params }: Props) {
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <div className="mb-6">
-        <p className="text-sm text-gray-400 mb-1">
-          <Link href="/" className="hover:underline">中学</Link> ›
-        </p>
-        <h1 className="text-2xl font-bold text-gray-800">中学{gradeLevel}年</h1>
+        <Link
+          href="/"
+          className="mb-3 inline-flex items-center gap-1 rounded-full bg-white border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-700"
+        >
+          ‹ ホーム
+        </Link>
+        <h1 className="text-2xl font-black text-gray-800">中学{gradeLevel}年</h1>
         <p className="text-gray-500 text-sm mt-1">科目を選んで問題を解こう</p>
       </div>
 
@@ -56,10 +59,10 @@ export default async function GradePage({ params }: Props) {
                 <li key={topic.id}>
                   <Link
                     href={`/${subject.slug}/${topic.slug}`}
-                    className="flex items-center justify-between rounded-xl bg-white border border-gray-200 px-5 py-3.5 shadow-sm active:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between rounded-2xl bg-white border border-gray-200 px-5 py-3.5 shadow-sm transition-colors hover:border-emerald-300 hover:bg-emerald-50/40 active:bg-gray-50"
                   >
-                    <span className="font-medium text-gray-800 text-sm">{topic.name}</span>
-                    <span className="text-gray-400">›</span>
+                    <span className="font-bold text-gray-800 text-sm">{topic.name}</span>
+                    <span className="text-gray-300">›</span>
                   </Link>
                 </li>
               ))}
