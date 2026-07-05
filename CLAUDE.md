@@ -79,6 +79,7 @@ study.unlax.com/
 - `schema.prisma` には `url` を書かない。接続は `prisma.config.ts` で管理。
 - スキーマ変更後は必ず `pnpm prisma:generate` を実行してクライアントを再生成する。
 - `prisma.config.ts` は `DATABASE_URL` 環境変数を参照する。
+- DBのテーブル名・カラム名は snake_case とする。Prismaのモデル名・フィールド名はcamelCaseのまま、`@@map` / `@map` でDB側の実名（snake_case）にマッピングする。新しいモデル・フィールドを追加する際も同様に `@map` を付けること。
 
 ### pnpm build スクリプトのビルド許可
 - `sharp`, `unrs-resolver`, `bcrypt`, `@prisma/engines`, `prisma` のビルドは各 `pnpm-workspace.yaml` の `allowBuilds` で許可済み。
