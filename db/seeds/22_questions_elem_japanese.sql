@@ -6,11 +6,11 @@
 WITH t AS (
   SELECT topics.id AS topic_id
   FROM topics
-  JOIN subjects ON subjects.id = topics."subjectId"
+  JOIN subjects ON subjects.id = topics."subject_id"
   WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'hiragana'
 ),
 q AS (
-  INSERT INTO questions ("topicId", type, body, difficulty, "displayOrder") VALUES
+  INSERT INTO questions ("topic_id", type, body, difficulty, "display_order") VALUES
     ((SELECT topic_id FROM t), 'multiple_choice', '「つ」に濁点をつけると、どのような文字になりますか？', 1, 1),
     ((SELECT topic_id FROM t), 'multiple_choice', '「は」のカタカナはどれですか？', 1, 2),
     ((SELECT topic_id FROM t), 'multiple_choice', '「か」に濁点をつけると、どのような文字になりますか？', 1, 3),
@@ -36,9 +36,9 @@ q AS (
     ((SELECT topic_id FROM t), 'multiple_choice', '「ヲ」のひらがなはどれですか？', 1, 23),
     ((SELECT topic_id FROM t), 'multiple_choice', '「せ」のカタカナはどれですか？', 1, 24),
     ((SELECT topic_id FROM t), 'multiple_choice', '「ぺ」はどの文字に半濁点をつけたものですか？', 1, 25)
-  RETURNING id, "displayOrder"
+  RETURNING id, "display_order"
 )
-INSERT INTO question_choices ("questionId", body, "isCorrect", "displayOrder")
+INSERT INTO question_choices ("question_id", body, "is_correct", "display_order")
 SELECT q.id, v.body, v.is_correct, v.disp
 FROM q
 JOIN (VALUES
@@ -67,16 +67,16 @@ JOIN (VALUES
   (23, 'を', true,  1), (23, 'お', false, 2), (23, 'わ', false, 3), (23, 'う', false, 4),
   (24, 'セ', true,  1), (24, 'サ', false, 2), (24, 'シ', false, 3), (24, 'ソ', false, 4),
   (25, 'へ', true,  1), (25, 'ほ', false, 2), (25, 'は', false, 3), (25, 'ひ', false, 4)
-) AS v(dorder, body, is_correct, disp) ON q."displayOrder" = v.dorder;
+) AS v(dorder, body, is_correct, disp) ON q."display_order" = v.dorder;
 
 WITH q AS (
-  SELECT id, "displayOrder" FROM questions
-  WHERE "topicId" = (
-    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subjectId"
+  SELECT id, "display_order" FROM questions
+  WHERE "topic_id" = (
+    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subject_id"
     WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'hiragana'
   )
 )
-INSERT INTO question_steps ("questionId", "stepNumber", body)
+INSERT INTO question_steps ("question_id", "step_number", body)
 SELECT q.id, v.step, v.body
 FROM q
 JOIN (VALUES
@@ -105,7 +105,7 @@ JOIN (VALUES
   (23, 1, '「ヲ」のひらがなは「を」です。助詞として使われることが多い文字です。'),
   (24, 1, '「せ」のカタカナは「セ」です。'),
   (25, 1, '「ぺ」は「へ」に半濁点をつけた文字です。')
-) AS v(dorder, step, body) ON q."displayOrder" = v.dorder;
+) AS v(dorder, step, body) ON q."display_order" = v.dorder;
 
 -- ============================================================
 -- 1年生: 漢字（1年） (kanji-grade1)
@@ -113,11 +113,11 @@ JOIN (VALUES
 WITH t AS (
   SELECT topics.id AS topic_id
   FROM topics
-  JOIN subjects ON subjects.id = topics."subjectId"
+  JOIN subjects ON subjects.id = topics."subject_id"
   WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'kanji-grade1'
 ),
 q AS (
-  INSERT INTO questions ("topicId", type, body, difficulty, "displayOrder") VALUES
+  INSERT INTO questions ("topic_id", type, body, difficulty, "display_order") VALUES
     ((SELECT topic_id FROM t), 'multiple_choice', '「山」の読み方はどれですか？', 1, 1),
     ((SELECT topic_id FROM t), 'multiple_choice', '「川」の読み方はどれですか？', 1, 2),
     ((SELECT topic_id FROM t), 'multiple_choice', '「日」の読み方として正しいものはどれですか？', 1, 3),
@@ -143,9 +143,9 @@ q AS (
     ((SELECT topic_id FROM t), 'multiple_choice', '「手」の読み方はどれですか？', 1, 23),
     ((SELECT topic_id FROM t), 'multiple_choice', '「足」の読み方はどれですか？', 1, 24),
     ((SELECT topic_id FROM t), 'multiple_choice', '「目」の読み方はどれですか？', 1, 25)
-  RETURNING id, "displayOrder"
+  RETURNING id, "display_order"
 )
-INSERT INTO question_choices ("questionId", body, "isCorrect", "displayOrder")
+INSERT INTO question_choices ("question_id", body, "is_correct", "display_order")
 SELECT q.id, v.body, v.is_correct, v.disp
 FROM q
 JOIN (VALUES
@@ -174,16 +174,16 @@ JOIN (VALUES
   (23, 'て', true,   1), (23, 'あし', false, 2), (23, 'め', false, 4), (23, 'みみ', false, 3),
   (24, 'あし', true,  1), (24, 'て', false, 2), (24, 'め', false, 3), (24, 'くち', false, 4),
   (25, 'め', true,   1), (25, 'みみ', false, 2), (25, 'くち', false, 3), (25, 'て', false, 4)
-) AS v(dorder, body, is_correct, disp) ON q."displayOrder" = v.dorder;
+) AS v(dorder, body, is_correct, disp) ON q."display_order" = v.dorder;
 
 WITH q AS (
-  SELECT id, "displayOrder" FROM questions
-  WHERE "topicId" = (
-    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subjectId"
+  SELECT id, "display_order" FROM questions
+  WHERE "topic_id" = (
+    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subject_id"
     WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'kanji-grade1'
   )
 )
-INSERT INTO question_steps ("questionId", "stepNumber", body)
+INSERT INTO question_steps ("question_id", "step_number", body)
 SELECT q.id, v.step, v.body
 FROM q
 JOIN (VALUES
@@ -212,7 +212,7 @@ JOIN (VALUES
   (23, 1, '「手」は「て」と読みます。「しゅ」という音読みもあります（例：手術→しゅじゅつ）。'),
   (24, 1, '「足」は「あし」と読みます。「そく」という音読みもあります（例：足跡→そくせき）。'),
   (25, 1, '「目」は「め」と読みます。「もく」「ぼく」という音読みもあります。')
-) AS v(dorder, step, body) ON q."displayOrder" = v.dorder;
+) AS v(dorder, step, body) ON q."display_order" = v.dorder;
 
 -- ============================================================
 -- 1年生: 文の読み取り（1年） (sentence-basic-1)
@@ -220,11 +220,11 @@ JOIN (VALUES
 WITH t AS (
   SELECT topics.id AS topic_id
   FROM topics
-  JOIN subjects ON subjects.id = topics."subjectId"
+  JOIN subjects ON subjects.id = topics."subject_id"
   WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'sentence-basic-1'
 ),
 q AS (
-  INSERT INTO questions ("topicId", type, body, difficulty, "displayOrder") VALUES
+  INSERT INTO questions ("topic_id", type, body, difficulty, "display_order") VALUES
     ((SELECT topic_id FROM t), 'multiple_choice', '「たろうくんは　がっこうへ　いきました。」この文で、たろうくんはどこへ行きましたか？', 1, 1),
     ((SELECT topic_id FROM t), 'multiple_choice', '「はなこさんは　りんごを　たべました。」はなこさんは何をしましたか？', 1, 2),
     ((SELECT topic_id FROM t), 'multiple_choice', '「いぬが　にわで　あそんでいます。」いぬはどこにいますか？', 1, 3),
@@ -250,9 +250,9 @@ q AS (
     ((SELECT topic_id FROM t), 'multiple_choice', '「おにいさんは　たかい　やまに　のぼりました。」おにいさんはどこにのぼりましたか？', 1, 23),
     ((SELECT topic_id FROM t), 'multiple_choice', '「さかなが　かわを　およいでいます。」さかなはどこを泳いでいますか？', 1, 24),
     ((SELECT topic_id FROM t), 'multiple_choice', '「ともこさんは　にっきを　まいにち　かいています。」ともこさんは何をしていますか？', 1, 25)
-  RETURNING id, "displayOrder"
+  RETURNING id, "display_order"
 )
-INSERT INTO question_choices ("questionId", body, "isCorrect", "displayOrder")
+INSERT INTO question_choices ("question_id", body, "is_correct", "display_order")
 SELECT q.id, v.body, v.is_correct, v.disp
 FROM q
 JOIN (VALUES
@@ -281,16 +281,16 @@ JOIN (VALUES
   (23, 'たかいやま', true, 1), (23, 'ひくいやま', false, 2), (23, 'うみ', false, 3), (23, 'かわ', false, 4),
   (24, 'かわ', true, 1), (24, 'うみ', false, 2), (24, 'いけ', false, 3), (24, 'みず', false, 4),
   (25, 'にっきをかいている', true, 1), (25, 'にっきをよんでいる', false, 2), (25, 'えをかいている', false, 3), (25, 'ほんをよんでいる', false, 4)
-) AS v(dorder, body, is_correct, disp) ON q."displayOrder" = v.dorder;
+) AS v(dorder, body, is_correct, disp) ON q."display_order" = v.dorder;
 
 WITH q AS (
-  SELECT id, "displayOrder" FROM questions
-  WHERE "topicId" = (
-    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subjectId"
+  SELECT id, "display_order" FROM questions
+  WHERE "topic_id" = (
+    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subject_id"
     WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'sentence-basic-1'
   )
 )
-INSERT INTO question_steps ("questionId", "stepNumber", body)
+INSERT INTO question_steps ("question_id", "step_number", body)
 SELECT q.id, v.step, v.body
 FROM q
 JOIN (VALUES
@@ -319,7 +319,7 @@ JOIN (VALUES
   (23, 1, '文に「たかい やまに のぼりました」とあるので、高い山にのぼったことがわかります。'),
   (24, 1, '文に「かわを およいでいます」とあるので、川を泳いでいることがわかります。'),
   (25, 1, '文に「にっきを まいにち かいています」とあるので、日記を書いていることがわかります。')
-) AS v(dorder, step, body) ON q."displayOrder" = v.dorder;
+) AS v(dorder, step, body) ON q."display_order" = v.dorder;
 
 -- ============================================================
 -- 2年生: 漢字（2年） (kanji-grade2)
@@ -327,11 +327,11 @@ JOIN (VALUES
 WITH t AS (
   SELECT topics.id AS topic_id
   FROM topics
-  JOIN subjects ON subjects.id = topics."subjectId"
+  JOIN subjects ON subjects.id = topics."subject_id"
   WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'kanji-grade2'
 ),
 q AS (
-  INSERT INTO questions ("topicId", type, body, difficulty, "displayOrder") VALUES
+  INSERT INTO questions ("topic_id", type, body, difficulty, "display_order") VALUES
     ((SELECT topic_id FROM t), 'multiple_choice', '「朝」の読み方はどれですか？', 1, 1),
     ((SELECT topic_id FROM t), 'multiple_choice', '「夜」の読み方はどれですか？', 1, 2),
     ((SELECT topic_id FROM t), 'multiple_choice', '「昼」の読み方はどれですか？', 1, 3),
@@ -357,9 +357,9 @@ q AS (
     ((SELECT topic_id FROM t), 'multiple_choice', '「少」の読み方はどれですか？', 1, 23),
     ((SELECT topic_id FROM t), 'multiple_choice', '「新」の読み方はどれですか？', 1, 24),
     ((SELECT topic_id FROM t), 'multiple_choice', '「古」の読み方はどれですか？', 1, 25)
-  RETURNING id, "displayOrder"
+  RETURNING id, "display_order"
 )
-INSERT INTO question_choices ("questionId", body, "isCorrect", "displayOrder")
+INSERT INTO question_choices ("question_id", body, "is_correct", "display_order")
 SELECT q.id, v.body, v.is_correct, v.disp
 FROM q
 JOIN (VALUES
@@ -388,16 +388,16 @@ JOIN (VALUES
   (23, 'すく（ない）', true, 1), (23, 'おお（い）', false, 2), (23, 'ちい（さい）', false, 3), (23, 'ひく（い）', false, 4),
   (24, 'あたら（しい）', true, 1), (24, 'ふる（い）', false, 2), (24, 'おお（きい）', false, 3), (24, 'ちい（さい）', false, 4),
   (25, 'ふる（い）', true, 1), (25, 'あたら（しい）', false, 2), (25, 'おお（きい）', false, 3), (25, 'ちい（さい）', false, 4)
-) AS v(dorder, body, is_correct, disp) ON q."displayOrder" = v.dorder;
+) AS v(dorder, body, is_correct, disp) ON q."display_order" = v.dorder;
 
 WITH q AS (
-  SELECT id, "displayOrder" FROM questions
-  WHERE "topicId" = (
-    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subjectId"
+  SELECT id, "display_order" FROM questions
+  WHERE "topic_id" = (
+    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subject_id"
     WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'kanji-grade2'
   )
 )
-INSERT INTO question_steps ("questionId", "stepNumber", body)
+INSERT INTO question_steps ("question_id", "step_number", body)
 SELECT q.id, v.step, v.body
 FROM q
 JOIN (VALUES
@@ -426,7 +426,7 @@ JOIN (VALUES
   (23, 1, '「少」は「すく（ない）」と読みます。「しょう」という音読みもあります（例：少量→しょうりょう）。'),
   (24, 1, '「新」は「あたら（しい）」と読みます。「しん」という音読みもあります（例：新幹線→しんかんせん）。'),
   (25, 1, '「古」は「ふる（い）」と読みます。「こ」という音読みもあります（例：古典→こてん）。')
-) AS v(dorder, step, body) ON q."displayOrder" = v.dorder;
+) AS v(dorder, step, body) ON q."display_order" = v.dorder;
 
 -- ============================================================
 -- 2年生: 文章の読み取り（2年） (reading-comp-2)
@@ -434,11 +434,11 @@ JOIN (VALUES
 WITH t AS (
   SELECT topics.id AS topic_id
   FROM topics
-  JOIN subjects ON subjects.id = topics."subjectId"
+  JOIN subjects ON subjects.id = topics."subject_id"
   WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'reading-comp-2'
 ),
 q AS (
-  INSERT INTO questions ("topicId", type, body, difficulty, "displayOrder") VALUES
+  INSERT INTO questions ("topic_id", type, body, difficulty, "display_order") VALUES
     ((SELECT topic_id FROM t), 'multiple_choice', '「たろうくんは　学校から　帰ってきました。かばんを　おいてから、すぐに　こうえんへ　行きました。」たろうくんは、学校から帰ってきたあとに何をしましたか？', 2, 1),
     ((SELECT topic_id FROM t), 'multiple_choice', '「はなこさんは　本が　だいすきです。まい日、寝る前に　本を　よみます。」はなこさんはいつ本を読みますか？', 2, 2),
     ((SELECT topic_id FROM t), 'multiple_choice', '「そらが　くもってきました。かぜも　ふいてきました。もうすぐ　雨が　ふりそうです。」この文から、これからどうなりそうですか？', 2, 3),
@@ -464,9 +464,9 @@ q AS (
     ((SELECT topic_id FROM t), 'multiple_choice', '「花だんに　赤・黄色・白の　花が　さいています。いちばん多いのは　赤い花です。」花だんで一番多い花は何色ですか？', 2, 23),
     ((SELECT topic_id FROM t), 'multiple_choice', '「電車が　おくれました。だから、学校に　ちこくしてしまいました。」学校に遅刻したのはなぜですか？', 2, 24),
     ((SELECT topic_id FROM t), 'multiple_choice', '「夏休みに　おじいちゃんの　うちに　行きました。川で　魚を　つかまえました。とても　たのしかったです。」夏休みにどこへ行きましたか？', 2, 25)
-  RETURNING id, "displayOrder"
+  RETURNING id, "display_order"
 )
-INSERT INTO question_choices ("questionId", body, "isCorrect", "displayOrder")
+INSERT INTO question_choices ("question_id", body, "is_correct", "display_order")
 SELECT q.id, v.body, v.is_correct, v.disp
 FROM q
 JOIN (VALUES
@@ -495,16 +495,16 @@ JOIN (VALUES
   (23, '赤', true, 1), (23, '黄色', false, 2), (23, '白', false, 3), (23, 'ピンク', false, 4),
   (24, '電車がおくれたから', true, 1), (24, 'おきるのがおそかったから', false, 2), (24, 'みちにまよったから', false, 3), (24, 'わすれものをしたから', false, 4),
   (25, 'おじいちゃんの家', true, 1), (25, 'うみ', false, 2), (25, 'やま', false, 3), (25, 'こうえん', false, 4)
-) AS v(dorder, body, is_correct, disp) ON q."displayOrder" = v.dorder;
+) AS v(dorder, body, is_correct, disp) ON q."display_order" = v.dorder;
 
 WITH q AS (
-  SELECT id, "displayOrder" FROM questions
-  WHERE "topicId" = (
-    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subjectId"
+  SELECT id, "display_order" FROM questions
+  WHERE "topic_id" = (
+    SELECT topics.id FROM topics JOIN subjects ON subjects.id = topics."subject_id"
     WHERE subjects.slug = 'elem-japanese' AND topics.slug = 'reading-comp-2'
   )
 )
-INSERT INTO question_steps ("questionId", "stepNumber", body)
+INSERT INTO question_steps ("question_id", "step_number", body)
 SELECT q.id, v.step, v.body
 FROM q
 JOIN (VALUES
@@ -533,4 +533,4 @@ JOIN (VALUES
   (23, 1, '「いちばん多いのは 赤い花です」とはっきり書かれています。'),
   (24, 1, '「電車が おくれました。だから、ちこくしてしまいました」と書かれています。'),
   (25, 1, '「おじいちゃんの うちに 行きました」とあるので、おじいちゃんの家へ行ったことがわかります。')
-) AS v(dorder, step, body) ON q."displayOrder" = v.dorder;
+) AS v(dorder, step, body) ON q."display_order" = v.dorder;

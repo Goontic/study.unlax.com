@@ -1,7 +1,7 @@
 -- =============================================
 -- 高校入試対策 数学 トピック
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, 3, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -19,12 +19,12 @@ CROSS JOIN (VALUES
   ('exam-quadratic-eq',      '二次方程式',                   12)
 ) AS t(slug, name, display_order)
 WHERE s.slug = 'exam-math'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 高校入試対策 英語 トピック
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, 3, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -40,12 +40,12 @@ CROSS JOIN (VALUES
   ('exam-listening',       '聞き取り対策',                  10)
 ) AS t(slug, name, display_order)
 WHERE s.slug = 'exam-english'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 高校入試対策 国語 トピック
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, 3, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -59,12 +59,12 @@ CROSS JOIN (VALUES
   ('exam-writing-jp',      '作文',                         8)
 ) AS t(slug, name, display_order)
 WHERE s.slug = 'exam-japanese'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 高校入試対策 理科 トピック
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, 3, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -82,12 +82,12 @@ CROSS JOIN (VALUES
   ('exam-earth-geol',      '地層・岩石・地震',               12)
 ) AS t(slug, name, display_order)
 WHERE s.slug = 'exam-science'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 高校入試対策 社会 トピック
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, 3, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -104,4 +104,4 @@ CROSS JOIN (VALUES
   ('exam-civics-global',   '公民・国際社会',                 11)
 ) AS t(slug, name, display_order)
 WHERE s.slug = 'exam-social'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;

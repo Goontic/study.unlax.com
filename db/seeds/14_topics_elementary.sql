@@ -1,7 +1,7 @@
 -- =============================================
 -- 小学校 算数 トピック（学年1〜6）
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -48,12 +48,12 @@ CROSS JOIN (VALUES
   ('solid-volume-6',       '角柱・円柱の体積',      6, 35)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'elem-math'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 小学校 国語 トピック（学年1〜6）
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -87,12 +87,12 @@ CROSS JOIN (VALUES
   ('grammar-advanced',     '文法（敬語・品詞）',     6, 22)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'elem-japanese'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 小学校 理科 トピック（学年3〜6）
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -120,12 +120,12 @@ CROSS JOIN (VALUES
   ('environment-life',     '生物と環境',              6, 18)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'elem-science'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 小学校 社会 トピック（学年3〜6）
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -152,12 +152,12 @@ CROSS JOIN (VALUES
   ('world-basic',          '世界の国々',             6, 17)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'elem-social'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
 -- =============================================
 -- 小学校 英語 トピック（学年5〜6）
 -- =============================================
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -175,4 +175,4 @@ CROSS JOIN (VALUES
   ('reading-basic',        '英文読解（入門）',         6, 10)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'elem-english'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;

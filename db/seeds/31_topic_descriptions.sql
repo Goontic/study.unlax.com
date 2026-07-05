@@ -160,5 +160,5 @@ FROM (
   ('elem-english', 'reading-basic', E'みじかい英文を読んで内容をつかむ入門の単元です。\n・自己紹介文やスピーチ原稿など、まとまった英文にチャレンジ\n・知っている単語を手がかりに全体の意味をつかむ\n・だれが・何を・いつ、を意識して読むと分かりやすい')
 ) AS v(subject_slug, topic_slug, description)
 JOIN subjects s ON s.slug = v.subject_slug
-WHERE topics."subjectId" = s.id
+WHERE topics."subject_id" = s.id
   AND topics.slug = v.topic_slug;

@@ -1,6 +1,6 @@
 -- 英語・国語・理科・社会の単元を登録
 
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -12,9 +12,9 @@ CROSS JOIN (VALUES
   ('vocabulary',      '語彙・熟語',      2, 6)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'english'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -24,9 +24,9 @@ CROSS JOIN (VALUES
   ('idioms',            '慣用句・ことわざ',  2, 4)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'japanese'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -38,9 +38,9 @@ CROSS JOIN (VALUES
   ('weather',         '天気と気象',         2, 6)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'science'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
 
-INSERT INTO topics ("subjectId", slug, name, "gradeLevel", "displayOrder")
+INSERT INTO topics ("subject_id", slug, name, "grade_level", "display_order")
 SELECT s.id, t.slug, t.name, t.grade_level, t.display_order
 FROM subjects s
 CROSS JOIN (VALUES
@@ -52,4 +52,4 @@ CROSS JOIN (VALUES
   ('constitution',    '日本国憲法・政治', 3, 6)
 ) AS t(slug, name, grade_level, display_order)
 WHERE s.slug = 'social'
-ON CONFLICT ("subjectId", slug) DO NOTHING;
+ON CONFLICT ("subject_id", slug) DO NOTHING;
