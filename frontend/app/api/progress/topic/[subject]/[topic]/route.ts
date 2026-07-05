@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ subject: string; topic: string }> },
 ) {
   const session = await auth();
-  const accessToken = (session as { accessToken?: string }).accessToken;
+  const accessToken = (session as { accessToken?: string } | null)?.accessToken;
   if (!accessToken) {
     return NextResponse.json({ answeredIds: [], correctIds: [] });
   }

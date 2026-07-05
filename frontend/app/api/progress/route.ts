@@ -5,7 +5,7 @@ const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  const accessToken = (session as { accessToken?: string }).accessToken;
+  const accessToken = (session as { accessToken?: string } | null)?.accessToken;
   if (!accessToken) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
