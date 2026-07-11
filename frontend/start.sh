@@ -8,4 +8,4 @@ if [ -f "$ENV_FILE" ]; then
   set +a
 fi
 
-exec node "$(dirname "$0")/.next/standalone/frontend/server.js"
+exec node "$(dirname "$0")/.next/standalone/server.js"
