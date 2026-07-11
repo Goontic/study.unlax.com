@@ -66,11 +66,6 @@ export default function LoginPage() {
           {loading ? "ログイン中…" : "ログイン"}
         </button>
       </form>
-      <p className="mt-3 text-center text-sm">
-        <Link href="/forgot-password" className="text-gray-400 underline">
-          パスワードをお忘れの方へ
-        </Link>
-      </p>
       <p className="mt-3 text-center text-sm text-gray-500">
         アカウントがない方は{" "}
         <Link href="/register" className="text-blue-600 underline">

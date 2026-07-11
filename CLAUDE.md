@@ -54,7 +54,7 @@ study.unlax.com/
     │   ├── profile/       # マイページ（要認証）
     │   ├── admin/          # 管理画面（Server Components、Cookie の admin_token で保護）
     │   └── api/
-    │       ├── auth/      # NextAuth ハンドラー、register/forgot-password/reset-password
+    │       ├── auth/      # NextAuth ハンドラー、register
     │       ├── admin/     # 管理API（subjects/topics/questions/admins の CRUD）
     │       └── progress/  # 回答記録・進捗取得（要ログイン）
     ├── components/
@@ -67,7 +67,6 @@ study.unlax.com/
     │   ├── admin/          # 管理API用サービス層（subjects/topics/questions/admins.ts, http.ts）
     │   ├── auth.ts         # NextAuth.js 設定 + getSessionUserId()
     │   ├── admin-auth.ts   # 管理者JWT発行・検証（jose）、Cookie 読み取り
-    │   ├── mail.ts         # パスワード再設定メール送信
     │   └── types.ts        # 共有型定義
     ├── prisma/
     │   ├── schema.prisma
