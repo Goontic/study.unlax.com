@@ -11,14 +11,5 @@ module.exports = {
         HOSTNAME: "0.0.0.0",
       },
     },
-    {
-      name: "study-backend",
-      cwd: "./backend",
-      script: "dist/main.js",
-      env: {
-        NODE_ENV: "production",
-        PORT: 4001,
-      },
-    },
   ],
 };

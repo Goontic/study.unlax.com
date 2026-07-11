@@ -1,26 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
+import { signAdminToken } from "@/lib/admin-auth";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+const schema = z.object({
+  email: z.email(),
+  password: z.string().min(1),
+});
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const res = await fetch(`${API_BASE}/admin-auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    return NextResponse.json({ error: "ログインに失敗しました" }, { status: res.status });
+  const parsed = schema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) {
+    return NextResponse.json({ error: "ログインに失敗しました" }, { status: 400 });
   }
 
-  const data = (await res.json()) as {
-    accessToken: string;
-    admin: { id: number; email: string; displayName: string };
-  };
+  const admin = await prisma.adminUser.findUnique({ where: { email: parsed.data.email } });
+  if (!admin || !(await bcrypt.compare(parsed.data.password, admin.passwordHash))) {
+    return NextResponse.json({ error: "ログインに失敗しました" }, { status: 401 });
+  }
 
-  const response = NextResponse.json({ admin: data.admin });
-  response.cookies.set("admin_token", data.accessToken, {
+  const token = await signAdminToken({ id: admin.id, email: admin.email });
+  const response = NextResponse.json({
+    admin: { id: admin.id, email: admin.email, displayName: admin.displayName },
+  });
+  response.cookies.set("admin_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",

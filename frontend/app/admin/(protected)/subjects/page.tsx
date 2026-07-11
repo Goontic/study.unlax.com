@@ -1,22 +1,11 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
-import type { Subject } from "@/lib/types";
+import { findAllSubjects } from "@/lib/admin/subjects";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
-
-async function fetchSubjects(token: string): Promise<Subject[]> {
-  const res = await fetch(`${API_BASE}/admin/subjects`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json() as Promise<Subject[]>;
-}
+export const dynamic = "force-dynamic";
 
 export default async function AdminSubjectsPage() {
-  const token = (await getAdminToken())!;
-  const subjects = await fetchSubjects(token);
+  const subjects = await findAllSubjects();
 
   return (
     <div>

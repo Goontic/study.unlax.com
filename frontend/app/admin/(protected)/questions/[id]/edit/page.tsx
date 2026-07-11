@@ -1,18 +1,10 @@
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/admin-auth";
 import QuestionForm from "@/components/admin/QuestionForm";
-import type { Question, Subject, Topic } from "@/lib/types";
+import { prisma } from "@/lib/prisma";
+import { findAllSubjects } from "@/lib/admin/subjects";
+import { findAllTopics } from "@/lib/admin/topics";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
-
-async function fetchJson<T>(path: string, token: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [] as unknown as T;
-  return res.json() as Promise<T>;
-}
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,19 +12,19 @@ interface Props {
 
 export default async function EditQuestionPage({ params }: Props) {
   const { id } = await params;
-  const token = (await getAdminToken())!;
 
-  const questionRes = await fetch(`${API_BASE}/admin/questions/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+  const question = await prisma.question.findUnique({
+    where: { id: Number(id) },
+    include: {
+      choices: { orderBy: { displayOrder: "asc" } },
+      blankAnswers: { orderBy: { blankIndex: "asc" } },
+      orderItems: { orderBy: { correctPosition: "asc" } },
+      steps: { orderBy: { stepNumber: "asc" } },
+    },
   });
-  if (!questionRes.ok) notFound();
-  const question = (await questionRes.json()) as Question;
+  if (!question) notFound();
 
-  const [subjects, topics] = await Promise.all([
-    fetchJson<Subject[]>("/admin/subjects", token),
-    fetchJson<Topic[]>("/admin/topics", token),
-  ]);
+  const [subjects, topics] = await Promise.all([findAllSubjects(), findAllTopics()]);
 
   return (
     <div>

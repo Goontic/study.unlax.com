@@ -1,24 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { z } from "zod";
+import { getSessionUserId } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+const schema = z.object({
+  questionId: z.number().int().positive(),
+  isCorrect: z.boolean(),
+});
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  const accessToken = (session as { accessToken?: string } | null)?.accessToken;
-  if (!accessToken) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const res = await fetch(`${API_BASE}/progress`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+  const body = await req.json().catch(() => null);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Bad Request" }, { status: 400 });
+  }
+
+  const answer = await prisma.userAnswer.create({
+    data: {
+      userId,
+      questionId: parsed.data.questionId,
+      isCorrect: parsed.data.isCorrect,
     },
-    body: JSON.stringify(body),
   });
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
+  return NextResponse.json(answer, { status: 201 });
 }

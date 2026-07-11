@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/admin-auth";
 import QuestionForm from "@/components/admin/QuestionForm";
-import type { Genre, SchoolLevel, Subject, Topic } from "@/lib/types";
+import { findAllSubjects } from "@/lib/admin/subjects";
+import { findAllTopics } from "@/lib/admin/topics";
+import type { Genre, SchoolLevel } from "@/lib/types";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 const GENRES: { value: Genre; label: string }[] = [
   { value: "school_education", label: "学校教育" },
@@ -17,15 +18,6 @@ const SCHOOL_LEVELS: { value: SchoolLevel; label: string }[] = [
   { value: "exam_prep", label: "受験対策" },
 ];
 
-async function fetchJson<T>(path: string, token: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [] as unknown as T;
-  return res.json() as Promise<T>;
-}
-
 interface Props {
   searchParams: Promise<{
     genre?: string;
@@ -37,11 +29,7 @@ interface Props {
 
 export default async function NewQuestionPage({ searchParams }: Props) {
   const { genre, schoolLevel, subjectId, topicId } = await searchParams;
-  const token = (await getAdminToken())!;
-  const [subjects, topics] = await Promise.all([
-    fetchJson<Subject[]>("/admin/subjects", token),
-    fetchJson<Topic[]>("/admin/topics", token),
-  ]);
+  const [subjects, topics] = await Promise.all([findAllSubjects(), findAllTopics()]);
 
   // ステップ1: ジャンルを選ぶ
   if (!genre) {

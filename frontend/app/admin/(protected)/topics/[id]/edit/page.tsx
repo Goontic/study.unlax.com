@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/admin-auth";
 import TopicForm from "@/components/admin/TopicForm";
-import type { Subject, Topic } from "@/lib/types";
+import { prisma } from "@/lib/prisma";
+import { findAllSubjects } from "@/lib/admin/subjects";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,22 +11,12 @@ interface Props {
 
 export default async function EditTopicPage({ params }: Props) {
   const { id } = await params;
-  const token = (await getAdminToken())!;
 
-  const [topicRes, subjectsRes] = await Promise.all([
-    fetch(`${API_BASE}/admin/topics/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }),
-    fetch(`${API_BASE}/admin/subjects`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }),
+  const [topic, subjects] = await Promise.all([
+    prisma.topic.findUnique({ where: { id: Number(id) } }),
+    findAllSubjects(),
   ]);
-  if (!topicRes.ok) notFound();
-
-  const topic = (await topicRes.json()) as Topic;
-  const subjects = (subjectsRes.ok ? await subjectsRes.json() : []) as Subject[];
+  if (!topic) notFound();
 
   return (
     <div>

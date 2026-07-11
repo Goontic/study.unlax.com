@@ -4,21 +4,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "=== [1/5] git pull ==="
+echo "=== [1/4] git pull ==="
 git pull
 
-echo "=== [2/5] pnpm install ==="
+echo "=== [2/4] pnpm install ==="
 pnpm install --frozen-lockfile
 
-echo "=== [3/5] Prisma: generate & migrate ==="
-pnpm --filter backend prisma:generate
-pnpm --filter backend prisma:migrate:prod
-
-echo "=== [4/5] Build ==="
+echo "=== [3/4] Prisma migrate & Build ==="
+pnpm --filter frontend prisma:migrate:prod
 pnpm build
 
-echo "=== [5/5] PM2 restart ==="
-pm2 restart study-backend study-frontend
+echo "=== [4/4] PM2 restart ==="
+pm2 restart study-frontend
 
 echo ""
 echo "=== Deploy complete ==="

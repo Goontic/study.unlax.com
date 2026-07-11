@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { getQuestion, getQuestions, getSubjectBySlug, getTopic } from "@/lib/data";
 import type { Question, Subject, Topic } from "@/lib/types";
 import MultipleChoice from "@/components/quiz/MultipleChoice";
 import TextInput from "@/components/quiz/TextInput";
@@ -15,7 +15,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { questionId } = await params;
   try {
-    const q = await apiFetch<Question>(`/questions/${questionId}`);
+    const q = await getQuestion(Number(questionId));
+    if (!q) return { title: "問題" };
     return {
       title: q.body.slice(0, 40),
       description: `${q.body.slice(0, 80)} — 解説付きの高校受験対策問題`,
@@ -57,21 +58,22 @@ function buildJsonLd(q: Question, subject: Subject, topic: Topic) {
 
 export default async function QuestionPage({ params }: Props) {
   const { subject: subjectSlug, topic: topicSlug, questionId } = await params;
-  let question: Question;
-  let subject: Subject;
-  let topic: Topic;
 
-  let questions: Question[] = [];
-  try {
-    [question, subject, topic, questions] = await Promise.all([
-      apiFetch<Question>(`/questions/${questionId}`),
-      apiFetch<Subject>(`/subjects/${subjectSlug}`),
-      apiFetch<Topic>(`/subjects/${subjectSlug}/topics/${topicSlug}`),
-      apiFetch<Question[]>(`/subjects/${subjectSlug}/topics/${topicSlug}/questions`),
-    ]);
-  } catch {
-    notFound();
-  }
+  const [questionResult, subjectResult, topicResult, questions]: [
+    Question | null,
+    Subject | null,
+    Topic | null,
+    Question[],
+  ] = await Promise.all([
+    getQuestion(Number(questionId)),
+    getSubjectBySlug(subjectSlug),
+    getTopic(subjectSlug, topicSlug),
+    getQuestions(subjectSlug, topicSlug),
+  ]);
+  if (!questionResult || !subjectResult || !topicResult) notFound();
+  const question = questionResult;
+  const subject = subjectResult;
+  const topic = topicResult;
 
   const sorted = [...questions].sort((a, b) => a.displayOrder - b.displayOrder);
   const currentIndex = sorted.findIndex((q) => q.id === question.id);

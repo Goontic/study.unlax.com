@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api";
+import { getCertificationSubjects } from "@/lib/data";
 import type { SubjectWithTopics } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function CertificationPage() {
   let subjects: SubjectWithTopics[] = [];
   try {
-    subjects = await apiFetch<SubjectWithTopics[]>("/subjects/certification");
+    subjects = await getCertificationSubjects();
   } catch {
     subjects = [];
   }

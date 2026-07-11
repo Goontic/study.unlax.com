@@ -1,22 +1,11 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
-import type { AdminUser } from "@/lib/types";
+import { findAllAdmins } from "@/lib/admin/admins";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
-
-async function fetchAdmins(token: string): Promise<AdminUser[]> {
-  const res = await fetch(`${API_BASE}/admin/admins`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json() as Promise<AdminUser[]>;
-}
+export const dynamic = "force-dynamic";
 
 export default async function AdminAdminsPage() {
-  const token = (await getAdminToken())!;
-  const admins = await fetchAdmins(token);
+  const admins = await findAllAdmins();
 
   return (
     <div>

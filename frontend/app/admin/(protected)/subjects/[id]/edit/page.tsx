@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/admin-auth";
 import SubjectForm from "@/components/admin/SubjectForm";
-import type { Subject } from "@/lib/types";
+import { prisma } from "@/lib/prisma";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,13 +10,8 @@ interface Props {
 
 export default async function EditSubjectPage({ params }: Props) {
   const { id } = await params;
-  const token = (await getAdminToken())!;
-  const res = await fetch(`${API_BASE}/admin/subjects/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) notFound();
-  const subject = (await res.json()) as Subject;
+  const subject = await prisma.subject.findUnique({ where: { id: Number(id) } });
+  if (!subject) notFound();
 
   return (
     <div>

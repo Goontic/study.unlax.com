@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api";
+import { getExamPrepSubjects } from "@/lib/data";
 import type { SubjectWithTopics } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ const SUBJECT_COLORS: Record<string, string> = {
 export default async function ExamPrepPage() {
   let subjects: SubjectWithTopics[] = [];
   try {
-    subjects = await apiFetch<SubjectWithTopics[]>("/subjects/exam-prep");
+    subjects = await getExamPrepSubjects();
   } catch {
     subjects = [];
   }

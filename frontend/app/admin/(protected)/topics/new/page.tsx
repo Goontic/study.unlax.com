@@ -1,8 +1,7 @@
-import { getAdminToken } from "@/lib/admin-auth";
 import TopicForm from "@/components/admin/TopicForm";
-import type { Subject } from "@/lib/types";
+import { findAllSubjects } from "@/lib/admin/subjects";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 interface Props {
   searchParams: Promise<{ subjectId?: string }>;
@@ -10,12 +9,7 @@ interface Props {
 
 export default async function NewTopicPage({ searchParams }: Props) {
   const { subjectId } = await searchParams;
-  const token = (await getAdminToken())!;
-  const res = await fetch(`${API_BASE}/admin/subjects`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  const subjects = (res.ok ? await res.json() : []) as Subject[];
+  const subjects = await findAllSubjects();
 
   return (
     <div>

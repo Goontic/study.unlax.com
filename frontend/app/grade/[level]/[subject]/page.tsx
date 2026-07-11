@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { getSubjectBySlug, getSubjects, getTopics } from "@/lib/data";
 import type { Subject, Topic } from "@/lib/types";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 
 export async function generateStaticParams() {
   try {
-    const subjects = await apiFetch<Subject[]>("/subjects");
+    const subjects = await getSubjects();
     return subjects.flatMap((s) =>
       ["1", "2", "3"].map((level) => ({ level, subject: s.slug })),
     );
@@ -22,7 +22,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { level, subject: subjectSlug } = await params;
   try {
-    const s = await apiFetch<Subject>(`/subjects/${subjectSlug}`);
+    const s = await getSubjectBySlug(subjectSlug);
+    if (!s) return { title: "問題一覧" };
     return {
       title: `中学${level}年・${s.name}の問題一覧`,
       description: `中学${level}年の${s.name}の問題と解説が無料で使えます。`,
@@ -37,16 +38,12 @@ export default async function GradeSubjectPage({ params }: Props) {
   const gradeLevel = Number(level);
   if (!Number.isInteger(gradeLevel) || gradeLevel < 1 || gradeLevel > 3) notFound();
 
-  let subjectData: Subject;
-  let topics: Topic[];
-  try {
-    [subjectData, topics] = await Promise.all([
-      apiFetch<Subject>(`/subjects/${subjectSlug}`),
-      apiFetch<Topic[]>(`/subjects/${subjectSlug}/topics`),
-    ]);
-  } catch {
-    notFound();
-  }
+  const [subjectResult, topics]: [Subject | null, Topic[]] = await Promise.all([
+    getSubjectBySlug(subjectSlug),
+    getTopics(subjectSlug),
+  ]);
+  if (!subjectResult) notFound();
+  const subjectData = subjectResult;
 
   const gradeTopics = topics
     .filter((t) => t.gradeLevel === gradeLevel)

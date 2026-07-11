@@ -1,9 +1,8 @@
-import { auth } from "@/lib/auth";
+import { auth, getSessionUserId } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import SignOutButton from "./SignOutButton";
-
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
 
 export const metadata: Metadata = {
   title: "マイページ",
@@ -15,14 +14,13 @@ interface Stats {
   accuracy: number;
 }
 
-async function fetchStats(accessToken: string): Promise<Stats | null> {
+async function fetchStats(userId: number): Promise<Stats | null> {
   try {
-    const res = await fetch(`${API_BASE}/progress/stats`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json() as Promise<Stats>;
+    const [total, correct] = await Promise.all([
+      prisma.userAnswer.count({ where: { userId } }),
+      prisma.userAnswer.count({ where: { userId, isCorrect: true } }),
+    ]);
+    return { total, correct, accuracy: total > 0 ? Math.round((correct / total) * 100) : 0 };
   } catch {
     return null;
   }
@@ -32,8 +30,8 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const accessToken = (session as { accessToken?: string }).accessToken;
-  const stats = accessToken ? await fetchStats(accessToken) : null;
+  const userId = await getSessionUserId();
+  const stats = userId ? await fetchStats(userId) : null;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch } from "@/lib/api";
-import type { Subject, Topic, Question } from "@/lib/types";
+import { getQuestions, getSubjects, getTopic, getTopics } from "@/lib/data";
+import type { Topic, Question } from "@/lib/types";
 import TopicProgress from "@/components/quiz/TopicProgress";
 
 interface Props {
@@ -12,7 +12,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { subject: subjectSlug, topic: topicSlug } = await params;
   try {
-    const topic = await apiFetch<Topic>(`/subjects/${subjectSlug}/topics/${topicSlug}`);
+    const topic = await getTopic(subjectSlug, topicSlug);
+    if (!topic) return { title: "単元" };
     // 要点まとめがあれば冒頭を meta description に使う（単元ごとに固有の説明文にする）
     const summary = topic.description?.replace(/\s+/g, " ").trim();
     return {
@@ -28,10 +29,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   try {
-    const subjects = await apiFetch<Subject[]>("/subjects");
+    const subjects = await getSubjects();
     const pairs: { subject: string; topic: string }[] = [];
     for (const s of subjects) {
-      const topics = await apiFetch<Topic[]>(`/subjects/${s.slug}/topics`);
+      const topics = await getTopics(s.slug);
       for (const t of topics) {
         pairs.push({ subject: s.slug, topic: t.slug });
       }
@@ -44,17 +45,13 @@ export async function generateStaticParams() {
 
 export default async function TopicPage({ params }: Props) {
   const { subject: subjectSlug, topic: topicSlug } = await params;
-  let topicData: Topic;
-  let questions: Question[];
 
-  try {
-    [topicData, questions] = await Promise.all([
-      apiFetch<Topic>(`/subjects/${subjectSlug}/topics/${topicSlug}`),
-      apiFetch<Question[]>(`/subjects/${subjectSlug}/topics/${topicSlug}/questions`),
-    ]);
-  } catch {
-    notFound();
-  }
+  const [topicResult, questions]: [Topic | null, Question[]] = await Promise.all([
+    getTopic(subjectSlug, topicSlug),
+    getQuestions(subjectSlug, topicSlug),
+  ]);
+  if (!topicResult) notFound();
+  const topicData = topicResult;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">

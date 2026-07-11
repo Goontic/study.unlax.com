@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
 import SubjectFilter from "@/components/admin/SubjectFilter";
 import TopicFilter from "@/components/admin/TopicFilter";
 import KeywordSearch from "@/components/admin/KeywordSearch";
 import Pagination from "@/components/admin/Pagination";
-import type { Question, QuestionType, Subject, Topic } from "@/lib/types";
+import { findAllSubjects } from "@/lib/admin/subjects";
+import { findAllTopics } from "@/lib/admin/topics";
+import { findAllQuestions } from "@/lib/admin/questions";
+import type { QuestionType } from "@/lib/types";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 const TYPE_LABELS: Record<QuestionType, string> = {
   multiple_choice: "4択",
@@ -15,31 +17,6 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   fill_blank: "穴埋め",
   ordering: "並べ替え",
 };
-
-async function fetchJson<T>(path: string, token: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [] as unknown as T;
-  return res.json() as Promise<T>;
-}
-
-interface QuestionListResponse {
-  items: Question[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
-async function fetchQuestions(qs: URLSearchParams, token: string): Promise<QuestionListResponse> {
-  const res = await fetch(`${API_BASE}/admin/questions?${qs.toString()}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return { items: [], total: 0, page: 1, pageSize: 20 };
-  return res.json() as Promise<QuestionListResponse>;
-}
 
 interface Props {
   searchParams: Promise<{
@@ -52,19 +29,15 @@ interface Props {
 
 export default async function AdminQuestionsPage({ searchParams }: Props) {
   const { subjectId, topicId, keyword, page } = await searchParams;
-  const token = (await getAdminToken())!;
 
-  const [subjects, topics] = await Promise.all([
-    fetchJson<Subject[]>("/admin/subjects", token),
-    fetchJson<Topic[]>("/admin/topics", token),
-  ]);
+  const [subjects, topics] = await Promise.all([findAllSubjects(), findAllTopics()]);
 
-  const qs = new URLSearchParams();
-  if (subjectId) qs.set("subjectId", subjectId);
-  if (topicId) qs.set("topicId", topicId);
-  if (keyword) qs.set("keyword", keyword);
-  if (page) qs.set("page", page);
-  const { items: questions, total, page: currentPage, pageSize } = await fetchQuestions(qs, token);
+  const { items: questions, total, page: currentPage, pageSize } = await findAllQuestions({
+    subjectId: subjectId ? Number(subjectId) : undefined,
+    topicId: topicId ? Number(topicId) : undefined,
+    keyword: keyword?.trim() || undefined,
+    page: page ? Number(page) : undefined,
+  });
 
   const topicName = (id: number) => topics.find((t) => t.id === id)?.name ?? "";
   const topicsForSubject = subjectId

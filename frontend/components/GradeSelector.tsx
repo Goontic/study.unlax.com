@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { apiFetch } from "@/lib/api";
+import {
+  getCertificationSubjects,
+  getExamPrepSubjects,
+  getSubjectsByGrade,
+  getSubjectsByGradeElementary,
+} from "@/lib/data";
 import type { SubjectWithTopics } from "@/lib/types";
 
 const MIDDLE_GRADES = [
@@ -39,22 +44,22 @@ export default async function GradeSelector() {
   const [middleData, elementaryData, examPrepSubjects, certificationSubjects] = await Promise.all([
     Promise.all(
       MIDDLE_GRADES.map(async (g) => {
-        const subjects = await apiFetch<SubjectWithTopics[]>(`/subjects/by-grade/${g.level}`);
+        const subjects: SubjectWithTopics[] = await getSubjectsByGrade(g.level);
         return { ...g, subjects };
       }),
     ),
     Promise.all(
       ELEMENTARY_GRADES.map(async (g) => {
         try {
-          const subjects = await apiFetch<SubjectWithTopics[]>(`/subjects/elementary/by-grade/${g.level}`);
+          const subjects: SubjectWithTopics[] = await getSubjectsByGradeElementary(g.level);
           return { ...g, subjects };
         } catch {
           return { ...g, subjects: [] as SubjectWithTopics[] };
         }
       }),
     ),
-    apiFetch<SubjectWithTopics[]>("/subjects/exam-prep").catch(() => [] as SubjectWithTopics[]),
-    apiFetch<SubjectWithTopics[]>("/subjects/certification").catch(() => [] as SubjectWithTopics[]),
+    getExamPrepSubjects().catch(() => [] as SubjectWithTopics[]),
+    getCertificationSubjects().catch(() => [] as SubjectWithTopics[]),
   ]);
 
   const elementaryWithContent = elementaryData.filter((g) => g.subjects.length > 0);

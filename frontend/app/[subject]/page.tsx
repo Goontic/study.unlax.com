@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { getSubjectBySlug, getSubjects, getTopics } from "@/lib/data";
 import type { Subject, Topic } from "@/lib/types";
 
 interface Props {
@@ -11,7 +11,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { subject: slug } = await params;
   try {
-    const data = await apiFetch<Subject>(`/subjects/${slug}`);
+    const data = await getSubjectBySlug(slug);
+    if (!data) return { title: "科目" };
     const description =
       data.genre === "certification"
         ? `${data.name}の検定対策問題を単元別に学習できます。`
@@ -27,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   try {
-    const subjects = await apiFetch<Subject[]>("/subjects");
+    const subjects = await getSubjects();
     return subjects.map((s) => ({ subject: s.slug }));
   } catch {
     return [];
@@ -36,17 +37,13 @@ export async function generateStaticParams() {
 
 export default async function SubjectPage({ params }: Props) {
   const { subject: slug } = await params;
-  let subjectData: Subject;
-  let topics: Topic[];
 
-  try {
-    [subjectData, topics] = await Promise.all([
-      apiFetch<Subject>(`/subjects/${slug}`),
-      apiFetch<Topic[]>(`/subjects/${slug}/topics`),
-    ]);
-  } catch {
-    notFound();
-  }
+  const [subjectResult, topics]: [Subject | null, Topic[]] = await Promise.all([
+    getSubjectBySlug(slug),
+    getTopics(slug),
+  ]);
+  if (!subjectResult) notFound();
+  const subjectData = subjectResult;
 
   const sorted = [...topics].sort((a, b) => a.displayOrder - b.displayOrder);
 

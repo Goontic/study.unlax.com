@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/admin-auth";
 import AdminUserForm from "@/components/admin/AdminUserForm";
+import { prisma } from "@/lib/prisma";
 import type { AdminUser } from "@/lib/types";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -11,13 +11,16 @@ interface Props {
 
 export default async function EditAdminPage({ params }: Props) {
   const { id } = await params;
-  const token = (await getAdminToken())!;
-  const res = await fetch(`${API_BASE}/admin/admins/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
+  const record = await prisma.adminUser.findUnique({
+    where: { id: Number(id) },
+    select: { id: true, email: true, displayName: true, createdAt: true, updatedAt: true },
   });
-  if (!res.ok) notFound();
-  const admin = (await res.json()) as AdminUser;
+  if (!record) notFound();
+  const admin: AdminUser = {
+    ...record,
+    createdAt: record.createdAt.toISOString(),
+    updatedAt: record.updatedAt.toISOString(),
+  };
 
   return (
     <div>

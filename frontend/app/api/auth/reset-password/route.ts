@@ -1,14 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+const schema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(6),
+});
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const res = await fetch(`${API_BASE}/auth/reset-password`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+  const body = await req.json().catch(() => null);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ message: "入力内容が正しくありません" }, { status: 400 });
+  }
+
+  const record = await prisma.passwordResetToken.findUnique({
+    where: { token: parsed.data.token },
   });
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
+  if (!record || record.usedAt || record.expiresAt < new Date()) {
+    return NextResponse.json({ message: "無効または期限切れのトークンです" }, { status: 400 });
+  }
+
+  const passwordHash = await bcrypt.hash(parsed.data.password, 10);
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: record.userId },
+      data: { passwordHash },
+    }),
+    prisma.passwordResetToken.update({
+      where: { id: record.id },
+      data: { usedAt: new Date() },
+    }),
+  ]);
+
+  return NextResponse.json({ ok: true });
 }

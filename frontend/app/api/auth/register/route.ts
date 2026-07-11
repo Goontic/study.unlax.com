@@ -1,14 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
+const schema = z.object({
+  email: z.email(),
+  password: z.string().min(6),
+  displayName: z.string().min(1),
+});
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const res = await fetch(`${API_BASE}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+  const body = await req.json().catch(() => null);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ message: "入力内容が正しくありません" }, { status: 400 });
+  }
+  const { email, password, displayName } = parsed.data;
+
+  const existing = await prisma.user.findUnique({ where: { email } });
+  if (existing) {
+    return NextResponse.json(
+      { message: "このメールアドレスはすでに使われています" },
+      { status: 409 },
+    );
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const user = await prisma.user.create({
+    data: { email, passwordHash, displayName },
   });
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
+  return NextResponse.json(
+    { user: { id: user.id, email: user.email, displayName: user.displayName } },
+    { status: 201 },
+  );
 }

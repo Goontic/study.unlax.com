@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch } from "@/lib/api";
+import { getSubjectsByGrade } from "@/lib/data";
 import type { SubjectWithTopics } from "@/lib/types";
 
 interface Props {
@@ -29,7 +29,7 @@ export default async function GradePage({ params }: Props) {
 
   let subjects: SubjectWithTopics[];
   try {
-    subjects = await apiFetch<SubjectWithTopics[]>(`/subjects/by-grade/${gradeLevel}`);
+    subjects = await getSubjectsByGrade(gradeLevel);
   } catch {
     notFound();
   }

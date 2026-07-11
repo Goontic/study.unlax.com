@@ -1,18 +1,10 @@
 import type { MetadataRoute } from "next";
-import { apiFetch } from "@/lib/api";
+import { getSitemapEntries } from "@/lib/data";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://study.unlax.com";
 
 // 1時間ごとに再生成（問題追加を自動反映）
 export const revalidate = 3600;
-
-interface SitemapEntry {
-  slug: string;
-  topics: {
-    slug: string;
-    questions: { id: number; createdAt: string }[];
-  }[];
-}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
@@ -31,11 +23,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  let subjects: SitemapEntry[] = [];
+  let subjects: Awaited<ReturnType<typeof getSitemapEntries>> = [];
   try {
-    subjects = await apiFetch<SitemapEntry[]>("/subjects/sitemap-entries");
+    subjects = await getSitemapEntries();
   } catch {
-    // バックエンド停止中でも静的ページ分は返す
+    // DB接続不可でも静的ページ分は返す
     return entries;
   }
 

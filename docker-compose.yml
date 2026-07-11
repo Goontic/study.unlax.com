@@ -18,28 +18,6 @@ services:
       timeout: 5s
       retries: 10
 
-  backend:
-    build:
-      context: .
-      dockerfile: docker/backend.dev.Dockerfile
-    restart: unless-stopped
-    env_file:
-      - docker/.env.backend
-    environment:
-      # Docker 内部ネットワーク経由で postgres に接続
-      DATABASE_URL: postgresql://study_user:dev_password@postgres:5432/study_unlax
-    ports:
-      - "4001:4001"
-    volumes:
-      # ソースコードのみマウント（node_modules はイメージ内のものを使用）
-      - ./backend/src:/app/backend/src
-      - ./backend/prisma:/app/backend/prisma
-      - ./backend/prisma.config.ts:/app/backend/prisma.config.ts
-      - ./docker/entrypoint.backend.sh:/app/docker/entrypoint.backend.sh
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   mailpit:
     image: axllent/mailpit:latest
     restart: unless-stopped
@@ -55,8 +33,8 @@ services:
     env_file:
       - docker/.env.frontend
     environment:
-      # Next.js rewrite の転送先（Docker 内部ネットワーク）
-      BACKEND_URL: http://backend:4001
+      # Docker 内部ネットワーク経由で postgres に接続
+      DATABASE_URL: postgresql://study_user:dev_password@postgres:5432/study_unlax?schema=public
     ports:
       - "3000:3000"
     volumes:
@@ -65,8 +43,12 @@ services:
       - ./frontend/components:/app/frontend/components
       - ./frontend/lib:/app/frontend/lib
       - ./frontend/public:/app/frontend/public
+      - ./frontend/prisma:/app/frontend/prisma
+      - ./frontend/prisma.config.ts:/app/frontend/prisma.config.ts
+      - ./docker/entrypoint.frontend.sh:/app/docker/entrypoint.frontend.sh
     depends_on:
-      - backend
+      postgres:
+        condition: service_healthy
 
 volumes:
   postgres_data:

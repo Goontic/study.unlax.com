@@ -1,29 +1,10 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/admin-auth";
 import DeleteButton from "@/components/admin/DeleteButton";
 import SubjectFilter from "@/components/admin/SubjectFilter";
-import type { Subject, Topic } from "@/lib/types";
+import { findAllSubjects } from "@/lib/admin/subjects";
+import { findAllTopics } from "@/lib/admin/topics";
 
-const API_BASE = process.env.BACKEND_URL ?? "http://localhost:4001";
-
-async function fetchSubjects(token: string): Promise<Subject[]> {
-  const res = await fetch(`${API_BASE}/admin/subjects`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json() as Promise<Subject[]>;
-}
-
-async function fetchTopics(token: string, subjectId?: string): Promise<Topic[]> {
-  const qs = subjectId ? `?subjectId=${subjectId}` : "";
-  const res = await fetch(`${API_BASE}/admin/topics${qs}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return [];
-  return res.json() as Promise<Topic[]>;
-}
+export const dynamic = "force-dynamic";
 
 interface Props {
   searchParams: Promise<{ subjectId?: string }>;
@@ -31,10 +12,9 @@ interface Props {
 
 export default async function AdminTopicsPage({ searchParams }: Props) {
   const { subjectId } = await searchParams;
-  const token = (await getAdminToken())!;
   const [subjects, topics] = await Promise.all([
-    fetchSubjects(token),
-    fetchTopics(token, subjectId),
+    findAllSubjects(),
+    findAllTopics(subjectId ? Number(subjectId) : undefined),
   ]);
   const subjectName = (id: number) => subjects.find((s) => s.id === id)?.name ?? "";
 
